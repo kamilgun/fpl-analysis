@@ -1,0 +1,14 @@
+# Python cache / derlenmiş dosyalar
+__pycache__/
+*.pyc
+
+# Ortam dosyaları
+.env
+
+# Jupyter notebook checkpoints
+*.ipynb_checkpoints
+
+# OS/IDE dosyaları
+.DS_Store
+.vscode/
+Thumbs.db
