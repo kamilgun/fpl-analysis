@@ -128,4 +128,103 @@ def player_advice(players):
         filtered_players[["web_name", "team", "position_name", "cost_million", "total_points", "selected_by_percent", "value_ratio"]]
         .sort_values("value_ratio", ascending=False)
         .reset_index(drop=True)
-    )      
+    )
+
+def team_dependency_ratio():
+    # 🏃‍♂️ Oyuncu katkısı
+    players["contribution"] = players["goals_scored"] + players["assists"]
+
+    # 🏟️ Takım toplam gollerini hesapla
+    team_goals = players.groupby("team")["goals_scored"].sum().reset_index()
+    team_goals.rename(columns={"goals_scored": "team_total_goals", "team": "team_id"}, inplace=True)
+
+    # Merge et: players + teams + team_goals
+    merged = players.merge(teams[["id", "name", "short_name"]], left_on="team", right_on="id", how="left")
+    merged = merged.merge(team_goals, left_on="team", right_on="team_id", how="left")
+
+    # 🔧 TDR hesaplama
+    merged["TDR"] = merged["contribution"] / merged["team_total_goals"]
+
+    st.title("Team Dependency Ratio (TDR) Analysis")
+    st.markdown("The player who contributed the most points to each team is listed in this panel.")
+
+    
+    team_leaders = (
+        merged.sort_values("TDR", ascending=False)
+        .drop_duplicates(subset=["team"])   # her takım için en yüksek TDR’li oyuncu kalır
+        .reset_index(drop=True)
+    )
+
+    # -----------------------------
+    # 📊 Görselleştirme
+    chart = (
+        alt.Chart(team_leaders)
+        .mark_bar()
+        .encode(
+            x=alt.X("short_name:N", title="Team"),
+            y=alt.Y("TDR:Q", axis=alt.Axis(format="%"), title="Team Dependency Ratio"),
+            color="name:N",
+            tooltip=["first_name", "second_name", "name", "goals_scored", "assists", "contribution", "team_total_goals", alt.Tooltip("TDR", format=".0%")]
+        )
+        .properties(height=400)
+    )
+
+    st.altair_chart(chart, use_container_width=True)
+
+    # -----------------------------
+    # 📋 Tablo
+    st.dataframe(
+        team_leaders[["first_name", "second_name", "name", "goals_scored", "assists", "contribution", "team_total_goals", "TDR"]]
+        .sort_values("TDR", ascending=False)
+        .reset_index(drop=True)
+    )          
+   
+def consistency_index():
+    history_df = pd.read_csv("./weekly_exec/weekly_points.csv")
+
+    consistency = (
+        history_df.groupby("player_id")["total_points"]
+        .agg(["mean", "std"])
+        .reset_index()
+    )
+
+    # 4. İstikrar skoru
+    consistency["consistency_index"] = consistency["mean"] / consistency["std"].replace(0, 1)
+
+    st.title("Consistency Index Analysis")
+    st.markdown("Examining a player's weekly points distribution to show how stable or surprising their profile is.")
+
+    consistency = consistency.merge(
+    players[["id", "first_name", "second_name", "team", "web_name", "total_points"]],
+    left_on="player_id", right_on="id", how="left"
+    )
+
+    max_point = history_df["total_points"].max()
+
+    consistency = consistency[consistency["total_points"] > max_point/3]
+
+    consistency = consistency.dropna(subset=["consistency_index"])
+
+    # -----------------------------
+    # 6. Scatterplot
+    chart = (
+        alt.Chart(consistency)
+        .mark_circle(size=60)
+        .encode(
+            x=alt.X("mean:Q", title="Ortalama Puan"),
+            y=alt.Y("std:Q", title="Standart Sapma"),
+            color="team:N",
+            tooltip=["web_name", "total_points", "mean", "std", "consistency_index"]
+        )
+        .properties(height=400)
+    )
+
+    st.altair_chart(chart, use_container_width=True)
+
+    # -----------------------------
+    # 7. Tablo
+    st.dataframe(
+        consistency[["first_name", "second_name", "total_points", "mean", "std", "consistency_index"]]
+        .sort_values("consistency_index", ascending=False)
+        .reset_index(drop=True)
+    )    

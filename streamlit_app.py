@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-from visuals import grafik_selected_vs_points, player_advice, grafik_value_vs_points
+from visuals import grafik_selected_vs_points, player_advice, grafik_value_vs_points, team_dependency_ratio, consistency_index
 
 
 st.set_page_config(layout="wide")
@@ -66,13 +66,13 @@ with rows[0][2]:
 with rows[1][0]:
     with st.container():
         st.markdown('<div class="box">', unsafe_allow_html=True)
-        #team_dependency_ratio()
+        team_dependency_ratio()
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[1][1]:
     with st.container():
         st.markdown('<div class="box">', unsafe_allow_html=True)
-        #consistency_index()
+        consistency_index()
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[1][2]:
