@@ -381,3 +381,20 @@ def fixture_difficulty_analysis():
     fixture_df["opp_info"] = fixture_df["short_name_opp"] + " (" + fixture_df["difficulty"].astype(str) + ")"
     pivot = fixture_df.pivot_table(index="name", columns="gw", values="opp_info", aggfunc="first")
     st.dataframe(pivot, use_container_width=True)
+
+def show_player_stats():
+    st.title("📊 Player Statistics – Dynamic Ranking")
+    
+    # Kullanıcıya seçim imkanı
+    metrics = [""] + ["total_points", "now_cost", "minutes", "goals_scored", "assists", "ict_index"]
+    metric_choice = st.selectbox("Sıralama ölçütü seç:", metrics, index=0) 
+
+    order_choice = st.radio("Sıralama yönü:", ["Azalan", "Artan"])
+    ascending = True if order_choice == "Artan" else False
+
+    merged_players = players.merge(teams[["id", "name"]], left_on="team", right_on="id", how="left")
+
+    # Sıralı tablo
+    if metric_choice:
+        sorted_df = merged_players.sort_values(metric_choice, ascending=ascending)
+        st.dataframe(sorted_df[["first_name", "second_name", "name", metric_choice]].head(50))    
