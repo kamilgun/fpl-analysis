@@ -39,10 +39,10 @@ st.markdown("""
 
         /* Kutu stilleri */
         .box {
-            padding: 20px;       /* kutu içi boşluk */
-            margin: 20px;        /* kutular arası mesafe */
+            padding: 10px;       /* kutu içi boşluk */
+            margin: 10px;        /* kutular arası mesafe */
             border-radius: 12px; /* köşeleri yuvarlat */
-            background-color: #6c757d; /* hafif gri arka plan */
+            background-color: #d3d3d3; /* hafif gri arka plan */
             box-shadow: 0px 2px 6px rgba(0,0,0,0.1); /* gölge efekti */
         }
             
@@ -106,7 +106,7 @@ with rows[2][0]:
 with rows[2][1]:
     with st.container():
         st.markdown('<div class="box">', unsafe_allow_html=True)
-        st.write("Buraya başka bir grafik gelecek!!!")
+        st.write("Buraya başka bir grafik gelecek")
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[2][2]:
