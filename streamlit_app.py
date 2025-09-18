@@ -53,13 +53,13 @@ with rows[0][0]:
 with rows[0][1]:
     with st.container():
         st.markdown('<div class="box">', unsafe_allow_html=True)
-        #grafik_selected_vs_points(players)
+        grafik_selected_vs_points(players)
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[0][2]:
     with st.container():
         st.markdown('<div class="box">', unsafe_allow_html=True)
-        #player_advice(players)
+        player_advice(players)
         st.markdown('</div>', unsafe_allow_html=True)
   
 # 2. satır
