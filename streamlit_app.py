@@ -15,6 +15,16 @@ data = response.json()
 players = pd.DataFrame(data['elements'])
 teams = pd.DataFrame(data['teams'])
 
+st.markdown(
+    """
+    <div style="text-align:center; margin-bottom:20px;">
+        <img src="https://fantasy.premierleague.com/static/media/shared/branding/fpl-logo--darkbg.abc123.png" 
+             style="max-width: 80%; height: auto;">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # --- Global CSS for padding inside each box ---
 # --- Global CSS for layout adjustments ---
 st.markdown("""
@@ -35,6 +45,11 @@ st.markdown("""
             background-color: #d3d3d3; /* hafif gri arka plan */
             box-shadow: 0px 2px 6px rgba(0,0,0,0.1); /* gölge efekti */
         }
+            
+        .custom-divider {
+            border-top: 2px solid #6c757d;
+            margin: 20px 0;
+    }
     </style>
 """, unsafe_allow_html=True)
 
