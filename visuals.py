@@ -309,3 +309,75 @@ def show_table():
     standings = read_pl_table("./league_table.csv")
     html = render_standings_html(standings)   # burada dedent kullanmak iyi olur yine
     components.html(html, height=950, scrolling=True)
+
+@st.cache_data
+def load_fixtures():
+    url = "https://fantasy.premierleague.com/api/fixtures/"
+    r = requests.get(url)
+    return r.json()
+
+@st.cache_data
+def load_teams():
+    url = "https://fantasy.premierleague.com/api/bootstrap-static/"
+    r = requests.get(url).json()
+    teams = pd.DataFrame(r["teams"])
+    return teams[["id", "name", "short_name", "code"]], r["events"]
+
+def build_fixture_difficulty(fixtures, teams, events, gameweeks=5):
+    # Sadece önümüzdeki X haftayı al
+    current_gw = next(e["id"] for e in events if e["is_current"]) + 1
+
+    upcoming = [f for f in fixtures if f["event"] and current_gw <= f["event"] < current_gw+gameweeks]
+
+    # Home ve Away ayrı ayrı işleniyor
+    data = []
+    for f in upcoming:
+        # Ev sahibi
+        data.append({
+            "team": f["team_h"],
+            "opponent": f["team_a"],
+            "gw": f["event"],
+            "difficulty": f["team_h_difficulty"],
+            "venue": "H"
+        })
+        # Deplasman
+        data.append({
+            "team": f["team_a"],
+            "opponent": f["team_h"],
+            "gw": f["event"],
+            "difficulty": f["team_a_difficulty"],
+            "venue": "A"
+        })
+
+    df = pd.DataFrame(data)
+    df = df.merge(teams, left_on="team", right_on="id").drop("id", axis=1)
+    df = df.merge(teams, left_on="opponent", right_on="id", suffixes=("", "_opp")).drop("id", axis=1)
+
+    # Takım başına ortalama difficulty
+    avg_df = df.groupby("name").agg({"difficulty":"mean"}).reset_index().sort_values("difficulty")
+    avg_df.rename(columns={"difficulty":"Avg Difficulty (next %d GWs)" % gameweeks}, inplace=True)
+
+    return avg_df, df
+
+def fixture_difficulty_analysis():
+    st.subheader("📊 Fixture Difficulty Analysis")
+
+    fixtures = load_fixtures()
+    teams, events = load_teams()
+
+    avg_df, fixture_df = build_fixture_difficulty(fixtures, teams, events, gameweeks=5)
+
+    st.write("### Ortalama FDR (Next 5 Games)")
+    
+    #st.dataframe(avg_df, use_container_width=True)
+    styled_avg = avg_df.style.background_gradient(
+        cmap="RdYlGn_r", subset=["Avg Difficulty (next 5 GWs)"]
+    ).format({"Avg Difficulty (next 5 GWs)": "{:.2f}"})
+
+    st.dataframe(styled_avg, use_container_width=True)
+
+        # Detaylı tablo (rakip adı + difficulty)
+    st.write("### Detaylı Fixture Zorlukları")
+    fixture_df["opp_info"] = fixture_df["short_name_opp"] + " (" + fixture_df["difficulty"].astype(str) + ")"
+    pivot = fixture_df.pivot_table(index="name", columns="gw", values="opp_info", aggfunc="first")
+    st.dataframe(pivot, use_container_width=True)

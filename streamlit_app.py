@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-from visuals import grafik_selected_vs_points, player_advice, grafik_value_vs_points, team_dependency_ratio, consistency_index, show_table
+from visuals import grafik_selected_vs_points, player_advice, grafik_value_vs_points, team_dependency_ratio, consistency_index, show_table, fixture_difficulty_analysis
 
 
 st.set_page_config(layout="wide")
@@ -85,7 +85,7 @@ with rows[1][2]:
 with rows[2][0]:
     with st.container():
         st.markdown('<div class="box">', unsafe_allow_html=True)
-        st.write("Buraya başka bir grafik gelecek")
+        fixture_difficulty_analysis()
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[2][1]:
