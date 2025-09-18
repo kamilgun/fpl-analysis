@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 import altair as alt
+import ast
 
 # Get data from FPL API
 url = "https://fantasy.premierleague.com/api/bootstrap-static/"
