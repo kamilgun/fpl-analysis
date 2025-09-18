@@ -236,6 +236,11 @@ def consistency_index():
         consistency[["first_name", "second_name", "total_points", "mean", "std", "consistency_index"]]
         .sort_values("consistency_index", ascending=False)
         .reset_index(drop=True)
+        .style.format({
+          "mean": "{:.2f}",
+          "std": "{:.2f}",
+          "consistency_index": "{:.2f}"
+      })
     )
 
 def read_pl_table(csv_path="./league_table.csv"):
