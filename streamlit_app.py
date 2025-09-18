@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
+from visuals import grafik_selected_vs_points, player_advice, grafik_value_vs_points
 
 
 st.set_page_config(layout="wide")
