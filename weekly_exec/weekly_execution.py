@@ -111,13 +111,6 @@ def fpl_value_calc():
     table_data.to_csv("./fpl_stats/player_stats.csv", index=False, encoding='utf-8-sig')
 
 
-history_df, players_df = get_fpl_players_history()
-
-print(history_df.head())
-# Kolonlar: ['round', 'total_points', 'minutes', 'goals_scored', 'assists', ..., 'player_id']
-
-print(players_df.head())
-# Kolonlar: ['id', 'first_name', 'second_name', 'team', 'now_cost', ...]
-
-get_fpl_players_history()
-fpl_value_calc()
+#history_df, players_df = get_fpl_players_history()
+#get_fpl_players_history()
+#fpl_value_calc()
