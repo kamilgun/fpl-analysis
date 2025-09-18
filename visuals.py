@@ -305,7 +305,7 @@ def render_standings_html(df: pd.DataFrame) -> str:
 import streamlit.components.v1 as components
 
 def show_table():
-    st.subheader("🏆 Premier League Table")
+    st.title("🏆 Premier League Table")
     standings = read_pl_table("./league_table.csv")
     html = render_standings_html(standings)   # burada dedent kullanmak iyi olur yine
     components.html(html, height=950, scrolling=True)
@@ -360,14 +360,14 @@ def build_fixture_difficulty(fixtures, teams, events, gameweeks=5):
     return avg_df, df
 
 def fixture_difficulty_analysis():
-    st.subheader("📊 Fixture Difficulty Analysis")
+    st.title("📊 Fixture Difficulty Analysis")
 
     fixtures = load_fixtures()
     teams, events = load_teams()
 
     avg_df, fixture_df = build_fixture_difficulty(fixtures, teams, events, gameweeks=5)
 
-    st.write("### Ortalama FDR (Next 5 Games)")
+    st.write("### Average FDR (Next 5 Games)")
     
     #st.dataframe(avg_df, use_container_width=True)
     styled_avg = avg_df.style.background_gradient(
@@ -377,7 +377,7 @@ def fixture_difficulty_analysis():
     st.dataframe(styled_avg, use_container_width=True)
 
         # Detaylı tablo (rakip adı + difficulty)
-    st.write("### Detaylı Fixture Zorlukları")
+    st.write("### Detailed Fixture Difficulty")
     fixture_df["opp_info"] = fixture_df["short_name_opp"] + " (" + fixture_df["difficulty"].astype(str) + ")"
     pivot = fixture_df.pivot_table(index="name", columns="gw", values="opp_info", aggfunc="first")
     st.dataframe(pivot, use_container_width=True)
