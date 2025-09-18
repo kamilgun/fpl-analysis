@@ -410,4 +410,4 @@ def show_player_stats():
     # Sıralı tablo
     if metric_choice:
         sorted_df = merged_players.sort_values(metric_choice, ascending=ascending)
-        st.dataframe(sorted_df[["first_name", "second_name", "name", metric_choice]].head(50))    
+        st.dataframe(sorted_df[["first_name", "second_name", "name", metric_choice]].head(50), height=600)    
