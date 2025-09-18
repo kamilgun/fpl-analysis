@@ -110,7 +110,22 @@ def fpl_value_calc():
     table_data.to_csv("./player_stats.csv", index=False, encoding='utf-8-sig')
     table_data.to_csv("./fpl_stats/player_stats.csv", index=False, encoding='utf-8-sig')
 
+def pl_table():
+    url = "https://api.football-data.org/v4/competitions/PL/standings"
+    headers = {"X-Auth-Token": "8df16e10df3c45a08707dfdc1c76ef29"}
 
-#history_df, players_df = get_fpl_players_history()
+    response = requests.get(url, headers=headers)
+    data = response.json()
+    table = data['standings'][0]['table']   # bu list of dict
+    df = pd.DataFrame(table)                # DataFrame'e çevir
+
+    # İstediğin kolonları seçebilirsin, ör:
+    # df = df[["position", "team", "playedGames", "won", "draw", "lost", "points", "goalDifference"]]
+
+    df.to_csv("./league_table.csv", index=False, encoding='utf-8-sig')
+
+
+
 #get_fpl_players_history()
 #fpl_value_calc()
+#pl_table()

@@ -227,4 +227,84 @@ def consistency_index():
         consistency[["first_name", "second_name", "total_points", "mean", "std", "consistency_index"]]
         .sort_values("consistency_index", ascending=False)
         .reset_index(drop=True)
-    )    
+    )
+
+def read_pl_table(csv_path="./league_table.csv"):
+    df = pd.read_csv(csv_path)
+
+    # team kolonunu dict'e çevir
+    df["team"] = df["team"].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+    df["team_name"] = df["team"].apply(lambda t: t.get("name") if isinstance(t, dict) else t)
+    df["short_name"] = df["team"].apply(lambda t: t.get("shortName") if isinstance(t, dict) else t)
+
+    standings = df[[
+        "position", "team_name", "playedGames", "won", "draw", "lost", 
+        "goalsFor", "goalsAgainst", "goalDifference", "points"
+    ]].sort_values("position").reset_index(drop=True)
+    return standings
+
+import textwrap
+def render_standings_html(df: pd.DataFrame) -> str:
+    html = textwrap.dedent("""\
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    table.pl-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        font-family: 'Roboto', sans-serif;
+    }
+    table.pl-table th {
+        background-color: #222;
+        color: #fff;
+        padding: 6px;
+        text-align: center;
+        font-weight: 500;
+    }
+    table.pl-table td {
+        border-bottom: 1px solid #ddd;
+        padding: 6px;
+        text-align: center;
+    }
+    /* Points: yeşil */
+    table.pl-table td.points { font-weight: 700; color: #1a7f37; }
+    /* Goal Difference: pozitif yeşil, negatif kırmızı */
+    table.pl-table td.gd-pos { color: #1a7f37; }
+    table.pl-table td.gd-neg { color: #d73a49; }
+    </style>
+    <table class="pl-table">
+      <thead>
+        <tr>
+          <th>Pos</th><th>Team</th><th>Pld</th><th>W</th><th>D</th><th>L</th>
+          <th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+        </tr>
+      </thead>
+      <tbody>
+    """)
+    for _, row in df.iterrows():
+        gd_class = "gd-pos" if row["goalDifference"] >= 0 else "gd-neg"
+        html += f"""
+        <tr>
+          <td>{row['position']}</td>
+          <td style="text-align:left">{row['team_name']}</td>
+          <td>{row['playedGames']}</td>
+          <td>{row['won']}</td>
+          <td>{row['draw']}</td>
+          <td>{row['lost']}</td>
+          <td>{row['goalsFor']}</td>
+          <td>{row['goalsAgainst']}</td>
+          <td class="{gd_class}">{row['goalDifference']}</td>
+          <td class="points">{row['points']}</td>
+        </tr>
+        """
+    html += "</tbody></table>"
+    return html
+
+import streamlit.components.v1 as components
+
+def show_table():
+    st.subheader("🏆 Premier League Table")
+    standings = read_pl_table("./league_table.csv")
+    html = render_standings_html(standings)   # burada dedent kullanmak iyi olur yine
+    components.html(html, height=950, scrolling=True)
