@@ -75,7 +75,7 @@ def grafik_value_vs_points():
         df[["Player", "Team", "Position", "Value", "Points", "value_ratio"]].head(120)
         .sort_values("value_ratio", ascending=False)
         .reset_index(drop=True),
-        height=800
+        height=600
     )  
 
 def player_advice(players):
@@ -216,7 +216,14 @@ def consistency_index():
             x=alt.X("mean:Q", title="Average Points"),
             y=alt.Y("std:Q", title="Standard Deviation"),
             color="team:N",
-            tooltip=["web_name", "total_points", "mean", "std", "consistency_index"]
+            #tooltip=["web_name", "total_points", "mean", "std", "consistency_index"]
+            tooltip=[
+            alt.Tooltip("web_name:N", title="Player"),
+            alt.Tooltip("total_points:Q", title="Points"),
+            alt.Tooltip("mean:Q", format=".2f"),
+            alt.Tooltip("std:Q", format=".2f"),
+            alt.Tooltip("consistency_index:Q", format=".2f")
+        ]
         )
         .properties(height=400)
     )
