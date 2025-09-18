@@ -74,7 +74,8 @@ def grafik_value_vs_points():
     st.dataframe(
         df[["Player", "Team", "Position", "Value", "Points", "value_ratio"]].head(120)
         .sort_values("value_ratio", ascending=False)
-        .reset_index(drop=True)
+        .reset_index(drop=True),
+        height=800
     )  
 
 def player_advice(players):
@@ -377,7 +378,7 @@ def fixture_difficulty_analysis():
     st.dataframe(styled_avg, use_container_width=True)
 
         # Detaylı tablo (rakip adı + difficulty)
-    st.write("### Detailed Fixture Difficulty")
+    st.write("### Fixture Difficulty Detailed")
     fixture_df["opp_info"] = fixture_df["short_name_opp"] + " (" + fixture_df["difficulty"].astype(str) + ")"
     pivot = fixture_df.pivot_table(index="name", columns="gw", values="opp_info", aggfunc="first")
     st.dataframe(pivot, use_container_width=True)
