@@ -399,7 +399,7 @@ def show_player_stats():
     st.title("📊 Player Statistics – Dynamic Ranking")
     
     # Kullanıcıya seçim imkanı
-    metrics = ["Select"] + ["total_points", "now_cost", "minutes", "goals_scored", "assists", "ict_index"]
+    metrics = [""] + ["total_points", "now_cost", "minutes", "goals_scored", "assists", "ict_index"]
     metric_choice = st.selectbox("Sıralama ölçütü seç:", metrics, index=0) 
 
     order_choice = st.radio("Sıralama yönü:", ["Azalan", "Artan"])
