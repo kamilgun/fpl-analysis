@@ -42,7 +42,7 @@ st.markdown("""
             padding: 10px;       /* kutu içi boşluk */
             margin: 10px;        /* kutular arası mesafe */
             border-radius: 12px; /* köşeleri yuvarlat */
-            background-color: #d3d3d3; /* hafif gri arka plan */
+            background-color: ##3D195B; /* hafif gri arka plan */
             box-shadow: 0px 2px 6px rgba(0,0,0,0.1); /* gölge efekti */
         }
             
