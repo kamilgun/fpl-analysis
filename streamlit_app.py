@@ -9,7 +9,7 @@ st.set_page_config(layout="wide")
 # Get data from FPL API
 url = "https://fantasy.premierleague.com/api/bootstrap-static/"
 response = requests.get(url)
-data = response.json()
+data = response.json() 
 
 # Export data to DataFrame
 players = pd.DataFrame(data['elements'])

@@ -212,8 +212,8 @@ def consistency_index():
         alt.Chart(consistency)
         .mark_circle(size=60)
         .encode(
-            x=alt.X("mean:Q", title="Ortalama Puan"),
-            y=alt.Y("std:Q", title="Standart Sapma"),
+            x=alt.X("mean:Q", title="Average Points"),
+            y=alt.Y("std:Q", title="Standard Deviation"),
             color="team:N",
             tooltip=["web_name", "total_points", "mean", "std", "consistency_index"]
         )
