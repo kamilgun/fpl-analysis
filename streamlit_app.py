@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 from visuals import grafik_selected_vs_points, player_advice, grafik_value_vs_points, team_dependency_ratio, consistency_index, show_table, fixture_difficulty_analysis, show_player_stats
-from analytics import streamlit_triple_captain
+from analytics import chip_suggestion
 
 st.set_page_config(layout="wide")
 
@@ -106,7 +106,7 @@ with rows[2][0]:
 with rows[2][1]:
     with st.container():
         st.markdown('<div class="box">', unsafe_allow_html=True)
-        streamlit_triple_captain()
+        chip_suggestion()
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[2][2]:
