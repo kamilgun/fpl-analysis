@@ -79,6 +79,7 @@ def suggest_triple_captain(user_id, data, fixtures):
 
 def streamlit_triple_captain():
     # UI
+    st.title("Chip Suggestions for FPL")
     st.subheader("🎯 Triple Captain Suggestion")
 
     user_id = st.text_input("FPL User ID giriniz:")
