@@ -400,9 +400,9 @@ def show_player_stats():
     
     # Kullanıcıya seçim imkanı
     metrics = [""] + ["total_points", "now_cost", "minutes", "goals_scored", "assists", "ict_index"]
-    metric_choice = st.selectbox("Sıralama ölçütü seç:", metrics, index=0) 
+    metric_choice = st.selectbox("Select sorting criteria:", metrics, index=0) 
 
-    order_choice = st.radio("Sıralama yönü:", ["Azalan", "Artan"])
+    order_choice = st.radio("Sort direction:", ["Azalan", "Artan"])
     ascending = True if order_choice == "Artan" else False
 
     merged_players = players.merge(teams[["id", "name"]], left_on="team", right_on="id", how="left")
