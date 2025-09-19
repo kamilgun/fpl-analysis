@@ -80,9 +80,10 @@ def suggest_triple_captain(user_id, data, fixtures):
 def streamlit_triple_captain():
     # UI
     st.title("Chip Suggestions for FPL")
-    st.subheader("🎯 Triple Captain Suggestion")
 
     user_id = st.text_input("FPL User ID giriniz:")
+
+    st.subheader("🎯 Triple Captain Suggestion")
 
     if user_id:
         #data = load_data()
@@ -90,5 +91,67 @@ def streamlit_triple_captain():
         suggestion = suggest_triple_captain(user_id, data, fixtures_data)
         st.success(suggestion)
 
+    st.subheader("🎯 Wild Card Suggestion")
+
+    if user_id:
+        #data = load_data()
+        #fixtures = load_fixtures()
+        suggestion = check_wildcard(user_id, data, fixtures_data)
+        st.info(suggestion)
+
+def check_wildcard(user_id, data, fixtures):
+    events = pd.DataFrame(data["events"])
+    players = pd.DataFrame(data["elements"])
+    teams = pd.DataFrame(data["teams"])
+
+    # Güncel GW
+    current_gw = events.loc[events["is_current"], "id"].values[0]
+
+    # Son 5 GW skorlarını çek
+    history_url = f"https://fantasy.premierleague.com/api/entry/{user_id}/history/"
+    history = requests.get(history_url).json()
+    past = pd.DataFrame(history["current"])
+    last5 = past.tail(5)
+
+    # 1) Form düşüklüğü: 5 haftada 3+ kez global avg altında
+    under_avg = (last5["points"] < last5["points_average"]).sum()
+    bad_form = under_avg >= 3
+
+    # 2) Zor fikstür: kadronun ortalama FDR’si önümüzdeki 5 hafta
+    picks_url = f"https://fantasy.premierleague.com/api/entry/{user_id}/event/{current_gw}/picks/"
+    squad = requests.get(picks_url).json()["picks"]
+    squad_ids = [p["element"] for p in squad]
+
+    squad_players = players[players["id"].isin(squad_ids)]
+    gw_fixtures = [f for f in fixtures if f["event"] and current_gw <= f["event"] < current_gw+5]
+
+    data_rows = []
+    for f in gw_fixtures:
+        data_rows.append({"team": f["team_h"], "diff": f["team_h_difficulty"]})
+        data_rows.append({"team": f["team_a"], "diff": f["team_a_difficulty"]})
+    fix_df = pd.DataFrame(data_rows)
+    avg_fdr = squad_players["team"].map(fix_df.groupby("team")["diff"].mean().to_dict()).mean()
+
+    hard_fixtures = avg_fdr >= 3.6
+
+    # 3) Sakat/cezalı oranı
+    status_flags = ["i", "d", "s"]  # injured, doubtful, suspended
+    flagged = squad_players[squad_players["status"].isin(status_flags)]
+    injured_ratio = len(flagged) / len(squad_players)
+    many_injuries = injured_ratio >= 0.25
+
+    # Sonuç ve açıklama
+    reasons = []
+    if bad_form:
+        reasons.append(f"Son 5 haftada {under_avg} kez ortalamanın altında puan aldın")
+    if hard_fixtures:
+        reasons.append(f"Önümüzdeki 5 haftada kadronun ortalama FDR’si {avg_fdr:.2f} (zor fikstür)")
+    if many_injuries:
+        reasons.append(f"Oyuncularının %{int(injured_ratio*100)}’i sakat/cezalı")
+
+    if reasons:
+        return "💡 Wildcard düşünebilirsin çünkü " + ", ".join(reasons) + "."
+    else:
+        return "✅ Wildcard için acil bir sebep görünmüyor. Kadron gayet stabil."
 
 #suggest_triple_captain(932776, data, fixtures_data)
