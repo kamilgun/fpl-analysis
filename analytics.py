@@ -19,12 +19,12 @@ def suggest_triple_captain(user_id, data, fixtures):
     events = pd.DataFrame(data["events"])
 
     print(f"User ID: {user_id}")
-    print("Triple Captain önerisi hesaplanıyor...")
+    print("Calculating Triple Captain recommendation...")
 
-    # Güncel GW
+    # Current GW
     current_gw = events.loc[events["is_current"] == True, "id"].values[0]
 
-    # User squad çek
+    # Get user squad
     entry_url = f"https://fantasy.premierleague.com/api/entry/{user_id}/event/{current_gw}/picks/"
     squad = requests.get(entry_url).json()["picks"]
     squad_ids = [p["element"] for p in squad]
@@ -32,10 +32,10 @@ def suggest_triple_captain(user_id, data, fixtures):
     user_players = players[players["id"].isin(squad_ids)].copy()
     user_players["form"] = user_players["form"].astype(float)
 
-    # O GW'deki fixture'lar
+    # GW Fixtures
     gw_fixtures = [f for f in fixtures if f["event"] == current_gw]
 
-    # Fixture kolaylık tablosu (takım id → avg difficulty)
+    # Fixture difficulty table (team id → avg difficulty)
     fixture_df = pd.DataFrame([
         {"team": f["team_h"], "difficulty": f["team_h_difficulty"]} for f in gw_fixtures
     ] + [
@@ -43,7 +43,7 @@ def suggest_triple_captain(user_id, data, fixtures):
     ])
     team_difficulty = fixture_df.groupby("team")["difficulty"].mean().to_dict()
 
-    # Double GW oyuncuları bul
+    # Find Double GW players
     doubles = []
     for pid in user_players["id"]:
         team_id = user_players.loc[user_players["id"] == pid, "team"].values[0]
@@ -51,45 +51,45 @@ def suggest_triple_captain(user_id, data, fixtures):
         if len(matches) > 1:
             doubles.append(pid)
 
-    # --- Öncelik 1: Double GW + form >= 5.5
+    # --- Priority  1: Double GW + form >= 5.5
     candidates = user_players[(user_players["form"] >= 5.5) & (user_players["id"].isin(doubles))]
     if not candidates.empty:
         best = candidates.sort_values("form", ascending=False).iloc[0]
-        return f"🎯 Triple Captain adayı: {best['web_name']} ({teams.loc[best['team']-1,'name']}) - Form {best['form']}, Double GW!"
+        return f"🎯 Triple Captain candidate: {best['web_name']} ({teams.loc[best['team']-1,'name']}) - Form {best['form']}, Double GW!"
     
-    # --- Öncelik 2: Tek maç + form >= 6.5 + kolay fixture
+    # --- Priority  lik 2: Single game + form >= 6.5 + easy fixture
     user_players["team_difficulty"] = user_players["team"].map(team_difficulty)
     candidates = user_players[(user_players["form"] >= 6.5) & (user_players["team_difficulty"] <= 2.5)]
     if not candidates.empty:
         best = candidates.sort_values("form", ascending=False).iloc[0]
-        return f"🎯 Alternatif Triple Captain adayı: {best['web_name']} ({teams.loc[best['team']-1,'name']}) - Form {best['form']}, kolay fikstür ({best['team_difficulty']})"
+        return f"🎯 Alternative  Triple Captain candidate: {best['web_name']} ({teams.loc[best['team']-1,'name']}) - Form {best['form']}, easy fixture ({best['team_difficulty']})"
     
-    # --- Hiçbiri değil
+    # --- Nothing found, explain why
     reasons = []
     if len(doubles) == 0:
-        reasons.append("Double GW yok")
+        reasons.append("No Double GW")
     if user_players["form"].max() < 6.5:
-        reasons.append("formda oyuncun yok")
+        reasons.append("You don't have any in-form players")
     if user_players["team"].map(team_difficulty).min() > 2.5:
-        reasons.append("fikstürler yeterince kolay değil")
+        reasons.append("fixtures are not easy enough")
 
-    reason_text = ", ".join(reasons) if reasons else "genel koşullar uygun değil"
+    reason_text = ", ".join(reasons) if reasons else "general conditions are not suitable"
 
-    return f"⚠️ Bu hafta Triple Captain adayı bulunamadı çünkü {reason_text}."
+    return f"⚠️ This week, the Triple Captain candidate was not found because {reason_text}."
 
 
 def check_wildcard(user_id, data, fixtures, lookahead_gw=5, form_weeks=5,
                    form_threshold_count=3, fdr_threshold=3.6, injured_threshold=0.25):
     """
-    Wildcard kontrolü (daha sağlam versiyon).
-    - user_id: FPL entry id (int or str)
-    - data: bootstrap-static JSON (dict)
-    - fixtures: fixtures JSON (list of dicts)
-    - lookahead_gw: kaç GW ileri bakılacak (default 5)
-    - form_weeks: son kaç haftaya bakılacak (default 5)
-    - form_threshold_count: son form_weeks içinde kaç kere altında kalırsa kötü form kabul edilecek (default 3)
-    - fdr_threshold: ortalama FDR eşiği (örn. 3.6)
-    - injured_threshold: sakat/cezalı oranı eşiği (örn. 0.25)
+Wildcard check (more robust version).
+- user_id: FPL entry id (int or str)
+- data: bootstrap-static JSON (dict)
+- fixtures: fixtures JSON (list of dicts)
+- lookahead_gw: number of GWs to look ahead (default 5)
+- form_weeks: number of weeks in the past (default 5)
+- form_threshold_count: number of times in the past form_weeks that it falls below will be considered bad form (default 3)
+- fdr_threshold: average FDR threshold (e.g. 3.6)
+- injured_threshold: injured/penalty ratio threshold (e.g. 0.25)
     """
 
     players = pd.DataFrame(data.get("elements", []))
@@ -103,10 +103,10 @@ def check_wildcard(user_id, data, fixtures, lookahead_gw=5, form_weeks=5,
         if len(cur) > 0:
             current_gw = int(cur.values[0])
     if current_gw is None:
-        # fallback: en küçük bitmemiş veya max id - daha güvenli mantık isteğe göre değişir
+       # fallback: smallest unfinished or max id - safer logic varies optional
         raise RuntimeError("Couldn't determine current GW from bootstrap 'events' data.")
 
-    # --- 1) Kullanıcının history'ini çek (güvenli)
+    # --- 1) Check the user's history (safe)
     history_url = f"https://fantasy.premierleague.com/api/entry/{user_id}/history/"
     r = requests.get(history_url)
     if r.status_code != 200:
@@ -114,37 +114,37 @@ def check_wildcard(user_id, data, fixtures, lookahead_gw=5, form_weeks=5,
     hist = r.json()
     if "current" not in hist or len(hist["current"]) == 0:
         # bazen farklı yapı olabilir; handle gracefully
-        return "⚠️ Kullanıcı geçmişi bulunamadı veya boş. ID'yi kontrol et."
+        return "⚠️ User history not found or empty. Check ID."
 
     past = pd.DataFrame(hist["current"])
     if "points" not in past.columns:
-        return "⚠️ History verisinde 'points' yok; farklı bir response yapısıyla karşılaşıldı."
+        return "⚠️ No 'points' in history data; a different response structure was encountered."
 
-    # son N haftayı al (eğer daha az varsa, var olanları kullan)
+    # take the last N weeks (if there are fewer, use existing ones)
     lastN = past.tail(form_weeks).copy()
-    user_mean = past["points"].mean()  # kullanıcının sezon ortalaması
+    user_mean = past["points"].mean()  # user's season average
 
-    # Kaç kez kullanıcı sezon ortalamasının altında kalmış?
+    # How many times has the user been below the seasonal average?
     under_avg = int((lastN["points"] < user_mean).sum())
     bad_form = under_avg >= form_threshold_count
 
-    # --- 2) Squad/picks çek
+    # --- 2) Squad/picks check
     picks_url = f"https://fantasy.premierleague.com/api/entry/{user_id}/event/{current_gw}/picks/"
     r = requests.get(picks_url)
     if r.status_code != 200:
-        return "⚠️ Kullanıcı picks verisi alınamadı. (private / non-existent / rate-limited?)"
+        return "⚠️ Could not retrieve user picks data. (private / non-existent / rate-limited?)"
     picks_json = r.json()
-    # picks JSON yapısı değişebilir (bazı endpoint'lerde 'picks' olmadığında farklı response olur)
+    # The picks JSON structure may vary (some endpoints will have different responses when there are no 'picks')
     if "picks" not in picks_json:
-        return "⚠️ Picks bilgisi response içinde yok."
+        return "⚠️ Picks information is not in the response."
 
     squad_ids = [int(p["element"]) for p in picks_json["picks"]]
 
     squad_players = players[players["id"].isin(squad_ids)].copy()
     if squad_players.empty:
-        return "⚠️ Squad verisi eşleşmedi (oyuncu id'leri bulunamadı)."
+        return "⚠️ Squad data did not match (player IDs not found)."
 
-    # --- 3) Fixture zorlukları: önümüzdeki lookahead_gw haftalık ortalama FDR
+    # --- 3) Fixture challenges: upcoming lookahead_gw weekly average FDR
     gw_fixtures = [f for f in fixtures if f.get("event") and current_gw <= f["event"] < current_gw + lookahead_gw]
     if len(gw_fixtures) == 0:
         avg_fdr = float("nan")
@@ -155,7 +155,7 @@ def check_wildcard(user_id, data, fixtures, lookahead_gw=5, form_weeks=5,
             rows.append({"team": int(f["team_a"]), "diff": float(f["team_a_difficulty"])})
         fix_df = pd.DataFrame(rows)
         team_diff_map = fix_df.groupby("team")["diff"].mean().to_dict()
-        # map takım zorluklarını kullanıcının kadrosuna
+        # map team difficulties to the user's squad
         squad_players["team_difficulty"] = squad_players["team"].map(team_diff_map)
         avg_fdr = float(squad_players["team_difficulty"].dropna().mean()) if not squad_players["team_difficulty"].dropna().empty else float("nan")
 
@@ -163,7 +163,7 @@ def check_wildcard(user_id, data, fixtures, lookahead_gw=5, form_weeks=5,
     if not pd.isna(avg_fdr):
         hard_fixtures = avg_fdr >= fdr_threshold
 
-    # --- 4) Sakat/cezalı oranı
+    # --- 4) Injured/suspended ratio
     if "status" in squad_players.columns:
         flagged = squad_players[squad_players["status"].isin(["i", "s", "d"])]
         injured_ratio = len(flagged) / len(squad_players) if len(squad_players) > 0 else 0.0
@@ -171,32 +171,32 @@ def check_wildcard(user_id, data, fixtures, lookahead_gw=5, form_weeks=5,
         injured_ratio = 0.0
     many_injuries = injured_ratio >= injured_threshold
 
-    # --- 5) Sonuç / açıklama oluşturma
+    # --- 5) Create conclusion/explanation
     reasons = []
     if bad_form:
-        reasons.append(f"son {form_weeks} haftada {under_avg} kere kendi sezon ortalamanın ({user_mean:.1f}) altında puan aldın")
+        reasons.append(f"You scored below your season average ({user_mean:.1f}) {under_avg} times in the last {form_weeks} weeks")
     if not pd.isna(avg_fdr):
-        reasons.append(f"kadronun önümüzdeki {lookahead_gw} GW için ortalama FDR {avg_fdr:.2f}")
+        reasons.append(f"squad's average FDR for the upcoming {lookahead_gw} GW is {avg_fdr:.2f}")
     else:
-        reasons.append("önümüzdeki fikstür verisi yetersiz")
+        reasons.append("insufficient fixture data")
     if many_injuries:
-        reasons.append(f"kadronun %{int(injured_ratio*100)}'i sakat/şüpheli/cezalı")
+        reasons.append(f"{int(injured_ratio*100)}% of the squad is injured/questionable/suspended")
 
-    # karar mantığı: bir veya daha fazla sebep varsa wildcard öner
+    # Decision logic: propose a wildcard if one or more reasons exist
     if bad_form or hard_fixtures or many_injuries:
-        return "💡 Wildcard düşünebilirsin çünkü " + "; ".join(reasons) + "."
+        return "💡 You can consider wildcard because " + "; ".join(reasons) + "."
     else:
-        return "✅ Wildcard için acil bir sebep görünmüyor. " + "; ".join(reasons) + "."
+        return "✅ There doesn't seem to be any pressing reason for a wildcard " + "; ".join(reasons) + "."
     
 def chip_suggestion():
     st.title("🎮 Chip Suggestions for FPL")
 
     # 1) User ID input
-    user_id = st.text_input("FPL User ID giriniz:", placeholder="ör. 123456")
+    user_id = st.text_input("Enter your FPL User ID:", placeholder="ex. 123456")
 
     if user_id:
-        st.divider()  # gri çizgi ile ayır
-
+        st.divider()  # separate with gray line
+        
         # 2) Triple Captain
         st.subheader("🎯 Triple Captain Suggestion")
         tc_suggestion = suggest_triple_captain(user_id, data, fixtures_data)

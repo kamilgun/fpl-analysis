@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-from visuals import grafik_selected_vs_points, player_advice, grafik_value_vs_points, team_dependency_ratio, consistency_index, show_table, fixture_difficulty_analysis, show_player_stats
+from visuals import graphics_selected_vs_points, player_advice, graphics_value_vs_points, team_dependency_ratio, consistency_index, show_table, fixture_difficulty_analysis, show_player_stats
 from analytics import chip_suggestion
 
 st.set_page_config(layout="wide")
@@ -29,7 +29,7 @@ st.markdown(
 # --- Global CSS for layout adjustments ---
 st.markdown("""
     <style>
-        /* Sayfa genelinde kenar boşluklarını büyüt */
+        /* Increase margins across the page */
         .block-container {
             padding-top: 2rem;
             padding-bottom: 2rem;
@@ -39,11 +39,11 @@ st.markdown("""
 
         /* Kutu stilleri */
         .box {
-            padding: 10px;       /* kutu içi boşluk */
-            margin: 10px;        /* kutular arası mesafe */
-            border-radius: 12px; /* köşeleri yuvarlat */
-            background-color: ##3d195b; /* hafif gri arka plan */
-            box-shadow: 0px 2px 6px rgba(0,0,0,0.1); /* gölge efekti */
+            padding: 10px;       /* space inside box */
+            margin: 10px;        /* distance between boxes */
+            border-radius: 12px; /* round the corners */
+            background-color: #3d195b; /* light gray background */
+            box-shadow: 0px 2px 6px rgba(0,0,0,0.1); /* shadow effect */
         }
             
         .custom-divider {
@@ -62,13 +62,13 @@ for _ in range(3):
 with rows[0][0]:
     with st.container():
         st.markdown('<div class="box">', unsafe_allow_html=True)
-        grafik_value_vs_points()
+        graphics_value_vs_points()
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[0][1]:
     with st.container():
         st.markdown('<div class="box">', unsafe_allow_html=True)
-        grafik_selected_vs_points(players)
+        graphics_selected_vs_points(players)
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[0][2]:

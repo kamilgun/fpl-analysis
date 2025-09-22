@@ -14,7 +14,7 @@ data = response.json()
 players = pd.DataFrame(data['elements'])
 teams = pd.DataFrame(data['teams'])
 
-def grafik_selected_vs_points(players):
+def graphics_selected_vs_points(players):
 
     # convert column to float
     players['selected_by_percent'] = pd.to_numeric(players['selected_by_percent'], errors='coerce')
@@ -48,29 +48,27 @@ def grafik_selected_vs_points(players):
     # Publish to streamlit
     st.pyplot(fig)
 
-def grafik_value_vs_points():
+def graphics_value_vs_points():
     
     df = pd.read_csv("./player_stats.csv")
 
     st.title("FPL Efficiency Analysis")
     st.markdown("Examining players with the highest ratings relative to their value")
 
-    # Pozisyon seçimi
+    # Position selection
     pozisyonlar = ["All Players"] + sorted(df["Position"].unique())
     secilen_pozisyon = st.selectbox("Filter by Position", pozisyonlar)
 
     if secilen_pozisyon != "All Players":
         df = df[df["Position"] == secilen_pozisyon]
 
-    # Verimlilik hesapla (puan / değer)
+    # Calculate efficiency (points / value)
     df["point_per_value"] = df["Points/Value"]
 
-    # En verimli oyuncuları sırala
-    df = df.sort_values("point_per_value", ascending=False)
+    # Sort by efficiency
+    df = df.sort_values("point_per_value", ascending=False)    
 
-    # st.dataframe(df[["Player", "Team", "Position", "Value", "Points", "value_ratio"]].head(120).reset_index(drop=True).rename_axis("Sıra").reset_index())
-
-    # 📋 Tablo
+    # 📋 Table
     st.dataframe(
         df[["Player", "Team", "Position", "Value", "Points", "value_ratio"]].head(120)
         .sort_values("value_ratio", ascending=False)
@@ -87,7 +85,7 @@ def player_advice(players):
     min_points = st.slider("Minimum points", 0, 250, 20)
     sel_range = st.slider("Selection Rate (%)", 0.0, 100.0, (5.0, 25.0))
 
-    # Pozisyon dönüşümü için eşleştirme sözlüğü
+    # Matching dictionary for position transformation
     position_map = {
         1: "Goalkeeper",
         2: "Defence",
@@ -95,16 +93,16 @@ def player_advice(players):
         4: "Forward"
     }
 
-    # now_cost 10x formatından float'a çevriliyor
+    # Converting now_cost from 10x to float
     players["cost_million"] = players["now_cost"] / 10
 
-    # Pozisyon adı ekleniyor
+    # Adding position name
     players["position_name"] = players["element_type"].map(position_map)
 
-    # Seçilme oranı string olarak geliyorsa float'a çevir
+    # Convert selected_by_percent to float
     players["selected_by_percent"] = players["selected_by_percent"].astype(float)
 
-    # Filtreleme işlemi
+    # Filtering
     filtered_players = players[
         (players["cost_million"] <= cost_limit) &
         (players["minutes"] >= min_minutes) &
@@ -113,19 +111,15 @@ def player_advice(players):
         (players["selected_by_percent"] <= sel_range[1]) 
     ]
     
-    # Pozisyon filtresi (eğer "Tümü" değilse)
+    # Position filter - if not "All"
     if position != "All":
         filtered_players = filtered_players[filtered_players["position_name"] == position]
 
-    # Verimlilik oranı hesaplama ve sıralama
+    # Calculate value ratio and sort
     filtered_players["value_ratio"] = filtered_players["total_points"] / filtered_players["cost_million"]
     filtered_players = filtered_players.sort_values("value_ratio", ascending=False)
 
-    # Kolonları seçerek göster
-    
-    #st.dataframe(filtered_players[["web_name", "team", "position_name", "cost_million", "total_points", "selected_by_percent", "value_ratio"]].reset_index(drop=True).rename_axis("Sıra").reset_index())
-
-    # 📋 Tablo
+    # 📋 Table
     st.dataframe(
         filtered_players[["web_name", "team", "position_name", "cost_million", "total_points", "selected_by_percent", "value_ratio"]]
         .sort_values("value_ratio", ascending=False)
@@ -133,18 +127,18 @@ def player_advice(players):
     )
 
 def team_dependency_ratio():
-    # 🏃‍♂️ Oyuncu katkısı
+    # 🏃‍♂️ Player contribution
     players["contribution"] = players["goals_scored"] + players["assists"]
 
-    # 🏟️ Takım toplam gollerini hesapla
+    # 🏟️ Calculate total team goals
     team_goals = players.groupby("team")["goals_scored"].sum().reset_index()
     team_goals.rename(columns={"goals_scored": "team_total_goals", "team": "team_id"}, inplace=True)
 
-    # Merge et: players + teams + team_goals
+    # Merge: players + teams + team_goals
     merged = players.merge(teams[["id", "name", "short_name"]], left_on="team", right_on="id", how="left")
     merged = merged.merge(team_goals, left_on="team", right_on="team_id", how="left")
 
-    # 🔧 TDR hesaplama
+    # 🔧 TDR calculation
     merged["TDR"] = merged["contribution"] / merged["team_total_goals"]
 
     st.title("Team Dependency Ratio (TDR) Analysis")
@@ -153,12 +147,12 @@ def team_dependency_ratio():
     
     team_leaders = (
         merged.sort_values("TDR", ascending=False)
-        .drop_duplicates(subset=["team"])   # her takım için en yüksek TDR’li oyuncu kalır
+        .drop_duplicates(subset=["team"])   # The player with the highest TDR for each team remains
         .reset_index(drop=True)
     )
 
     # -----------------------------
-    # 📊 Görselleştirme
+    # 📊 Visual
     chart = (
         alt.Chart(team_leaders)
         .mark_bar()
@@ -174,7 +168,7 @@ def team_dependency_ratio():
     st.altair_chart(chart, use_container_width=True)
 
     # -----------------------------
-    # 📋 Tablo
+    # 📋 Table
     st.dataframe(
         team_leaders[["first_name", "second_name", "name", "goals_scored", "assists", "contribution", "team_total_goals", "TDR"]]
         .sort_values("TDR", ascending=False)
@@ -190,7 +184,7 @@ def consistency_index():
         .reset_index()
     )
 
-    # 4. İstikrar skoru
+    # 4. Stability score
     consistency["consistency_index"] = consistency["mean"] / consistency["std"].replace(0, 1)
 
     st.title("Consistency Index Analysis")
@@ -231,7 +225,7 @@ def consistency_index():
     st.altair_chart(chart, use_container_width=True)
 
     # -----------------------------
-    # 7. Tablo
+    # 7. Table
     st.dataframe(
         consistency[["first_name", "second_name", "total_points", "mean", "std", "consistency_index"]]
         .sort_values("consistency_index", ascending=False)
@@ -246,7 +240,7 @@ def consistency_index():
 def read_pl_table(csv_path="./league_table.csv"):
     df = pd.read_csv(csv_path)
 
-    # team kolonunu dict'e çevir
+    # Convert team column to dict
     df["team"] = df["team"].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
     df["team_name"] = df["team"].apply(lambda t: t.get("name") if isinstance(t, dict) else t)
     df["short_name"] = df["team"].apply(lambda t: t.get("shortName") if isinstance(t, dict) else t)
@@ -320,7 +314,7 @@ import streamlit.components.v1 as components
 def show_table():
     st.title("🏆 Premier League Table")
     standings = read_pl_table("./league_table.csv")
-    html = render_standings_html(standings)   # burada dedent kullanmak iyi olur yine
+    html = render_standings_html(standings)  
     components.html(html, height=950, scrolling=True)
 
 @st.cache_data
@@ -337,15 +331,15 @@ def load_teams():
     return teams[["id", "name", "short_name", "code"]], r["events"]
 
 def build_fixture_difficulty(fixtures, teams, events, gameweeks=5):
-    # Sadece önümüzdeki X haftayı al
+    # Just take the next X weeks
     current_gw = next(e["id"] for e in events if e["is_current"]) + 1
 
     upcoming = [f for f in fixtures if f["event"] and current_gw <= f["event"] < current_gw+gameweeks]
 
-    # Home ve Away ayrı ayrı işleniyor
+    # Home and Away are processed separately
     data = []
     for f in upcoming:
-        # Ev sahibi
+        # Home
         data.append({
             "team": f["team_h"],
             "opponent": f["team_a"],
@@ -353,7 +347,7 @@ def build_fixture_difficulty(fixtures, teams, events, gameweeks=5):
             "difficulty": f["team_h_difficulty"],
             "venue": "H"
         })
-        # Deplasman
+        # Away
         data.append({
             "team": f["team_a"],
             "opponent": f["team_h"],
@@ -366,7 +360,7 @@ def build_fixture_difficulty(fixtures, teams, events, gameweeks=5):
     df = df.merge(teams, left_on="team", right_on="id").drop("id", axis=1)
     df = df.merge(teams, left_on="opponent", right_on="id", suffixes=("", "_opp")).drop("id", axis=1)
 
-    # Takım başına ortalama difficulty
+    # Average difficulty per team
     avg_df = df.groupby("name").agg({"difficulty":"mean"}).reset_index().sort_values("difficulty")
     avg_df.rename(columns={"difficulty":"Avg Difficulty (next %d GWs)" % gameweeks}, inplace=True)
 
@@ -389,7 +383,7 @@ def fixture_difficulty_analysis():
 
     st.dataframe(styled_avg, use_container_width=True)
 
-        # Detaylı tablo (rakip adı + difficulty)
+    # Detailed table (competitor name + difficulty)
     st.write("### Fixture Difficulty Detailed")
     fixture_df["opp_info"] = fixture_df["short_name_opp"] + " (" + fixture_df["difficulty"].astype(str) + ")"
     pivot = fixture_df.pivot_table(index="name", columns="gw", values="opp_info", aggfunc="first")
@@ -398,7 +392,7 @@ def fixture_difficulty_analysis():
 def show_player_stats():
     st.title("📊 Player Statistics – Dynamic Ranking")
     
-    # Kullanıcıya seçim imkanı
+    # Possibility of choice for the user
     metrics = [""] + ["total_points", "now_cost", "minutes", "goals_scored", "assists", "ict_index"]
     metric_choice = st.selectbox("Select sorting criteria:", metrics, index=0) 
 
@@ -407,7 +401,8 @@ def show_player_stats():
 
     merged_players = players.merge(teams[["id", "name"]], left_on="team", right_on="id", how="left")
 
-    # Sıralı tablo
+    # Sorted table
     if metric_choice:
         sorted_df = merged_players.sort_values(metric_choice, ascending=ascending)
-        st.dataframe(sorted_df[["first_name", "second_name", "name", metric_choice]].head(50))    
+        st.dataframe(sorted_df[["first_name", "second_name", "name", metric_choice]].head(50)
+                     )    
