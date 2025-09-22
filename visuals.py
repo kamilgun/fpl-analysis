@@ -203,7 +203,7 @@ def consistency_index():
     players[["id", "first_name", "second_name", "team", "web_name", "total_points"]],
     left_on="player_id", right_on="id", how="left"
     )
-
+    
     max_point = history_df["total_points"].max()
 
     consistency = consistency[consistency["total_points"] > max_point/3]
