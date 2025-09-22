@@ -20,7 +20,9 @@ def graphics_selected_vs_points(players):
     players['selected_by_percent'] = pd.to_numeric(players['selected_by_percent'], errors='coerce')
 
     st.title("Player Selection Rate vs Total Points")
-    st.markdown("Displaying players based on their selection rates. You can examine less-preferred players with good ratings or more-preferred players with ineffective scores")
+    st.markdown("Displaying players based on their selection rates")
+    st.markdown("You can examine less-preferred players with good ratings or more-preferred players with ineffective scores")
+    st.markdown("Y-Axis: Total Points | X-Axis: Selection Rate (%)")
 
     # Get filter from user
     min_sel = st.slider("Min selection rate (%)", 0.0, 100.0, 3.0)
@@ -54,6 +56,8 @@ def graphics_value_vs_points():
 
     st.title("FPL Efficiency Analysis")
     st.markdown("Examining players with the highest ratings relative to their value")
+    st.markdown("Everyone knows about Salah and Haaland")
+    st.markdown("Here are some budget-friendly players who bring in high scores despite their low cost")
 
     # Position selection
     pozisyonlar = ["All Players"] + sorted(df["Position"].unique())
@@ -78,6 +82,7 @@ def graphics_value_vs_points():
 
 def player_advice(players):
     st.title("Scout Assisant - Adviced Players")
+    st.markdown("Here you can perform a detailed search for each position, including the player's playing time, value and selection rate in your search.")
     
     cost_limit = st.slider("Maximum Player Value", 4.0, 12.5, 8.5)
     position = st.selectbox("Position", ["All", "Goalkeeper", "Defence", "Midfielder", "Forward"])

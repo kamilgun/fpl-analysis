@@ -13,7 +13,12 @@ from visuals import (
 )
 from analytics import chip_suggestion
 
-st.set_page_config(layout="wide")
+# --- Page config ---
+st.set_page_config(
+    page_title="FPL Analysis Dashboard",
+    page_icon="⚽",
+    layout="wide"
+)
 
 # --- Data ---
 url = "https://fantasy.premierleague.com/api/bootstrap-static/"
