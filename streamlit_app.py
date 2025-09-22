@@ -24,7 +24,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
+ 
 # --- Global CSS for padding inside each box ---
 # --- Global CSS for layout adjustments ---
 st.markdown("""
