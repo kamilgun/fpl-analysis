@@ -19,7 +19,7 @@ def graphics_selected_vs_points(players):
     # convert column to float
     players['selected_by_percent'] = pd.to_numeric(players['selected_by_percent'], errors='coerce')
 
-    st.title("Player Selection Rate vs Total Points")
+    st.title("Selection Rate vs Total Points")
     st.markdown("Displaying players based on their selection rates")
     st.markdown("You can examine less-preferred players with good ratings or more-preferred players with ineffective scores")
     st.markdown("Y-Axis: Total Points | X-Axis: Selection Rate (%)")
@@ -56,7 +56,7 @@ def graphics_value_vs_points():
 
     st.title("FPL Efficiency Analysis")
     st.markdown("Examining players with the highest ratings relative to their value")
-    st.markdown("Everyone knows about Salah and Haaland")
+    st.markdown("Everyone knows about Salah or Haaland")
     st.markdown("Here are some budget-friendly players who bring in high scores despite their low cost")
 
     # Position selection
@@ -84,8 +84,8 @@ def player_advice(players):
     st.title("Scout Assisant - Adviced Players")
     st.markdown("Here you can perform a detailed search for each position, including the player's playing time, value and selection rate in your search.")
     
-    cost_limit = st.slider("Maximum Player Value", 4.0, 12.5, 8.5)
     position = st.selectbox("Position", ["All", "Goalkeeper", "Defence", "Midfielder", "Forward"])
+    cost_limit = st.slider("Maximum Player Value", 4.0, 12.5, 8.5)
     min_minutes = st.slider("Minimum minutes played", 0, 3000, 200)
     min_points = st.slider("Minimum points", 0, 250, 20)
     sel_range = st.slider("Selection Rate (%)", 0.0, 100.0, (5.0, 25.0))
@@ -148,6 +148,8 @@ def team_dependency_ratio():
 
     st.title("Team Dependency Ratio (TDR) Analysis")
     st.markdown("The player who contributed the most points to each team is listed in this panel.")
+    st.markdown("Sometimes a player takes the scoring load off their team. If you think that team will win the week, you should definitely check it out!")
+    
 
     
     team_leaders = (
@@ -194,6 +196,8 @@ def consistency_index():
 
     st.title("Consistency Index Analysis")
     st.markdown("Examining a player's weekly points distribution to show how stable or surprising their profile is.")
+    st.markdown("Does a player consistently score the same, or does he fly for a week and then go quiet for a long time? Here wo go!")
+    
 
     consistency = consistency.merge(
     players[["id", "first_name", "second_name", "team", "web_name", "total_points"]],
