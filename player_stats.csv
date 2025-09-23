@@ -1,121 +1,121 @@
 ﻿Player,Team,Position,Value,Points,Points/Value,value_ratio,now_cost
-Marc Guéhi,Crystal Palace,Defender,4.7,29,6.170212765957446,6.17,4.7
-Marcos Senesi Barón,Bournemouth,Defender,4.6,28,6.086956521739131,6.09,4.6
-Robin Roefs,Sunderland,Goalkeeper,4.5,27,6.0,6.0,4.5
-Jurriën Timber,Arsenal,Defender,5.7,34,5.964912280701754,5.96,5.7
-Trevoh Chalobah,Chelsea,Defender,5.1,30,5.882352941176471,5.88,5.1
-Micky van de Ven,Spurs,Defender,4.6,27,5.869565217391305,5.87,4.6
-Riccardo Calafiori,Arsenal,Defender,5.7,33,5.7894736842105265,5.79,5.7
-Guglielmo Vicario,Spurs,Goalkeeper,5.1,29,5.686274509803922,5.69,5.1
-Maxence Lacroix,Crystal Palace,Defender,5.0,28,5.6,5.6,5.0
-Cristian Romero,Spurs,Defender,5.0,27,5.4,5.4,5.0
-Moisés Caicedo Corozo,Chelsea,Midfielder,5.5,29,5.2727272727272725,5.27,5.5
-Nick Pope,Newcastle,Goalkeeper,5.0,26,5.2,5.2,5.0
-Joe Rodon,Leeds,Defender,4.0,20,5.0,5.0,4.0
-Tino Livramento,Newcastle,Defender,5.1,25,4.901960784313726,4.9,5.1
-Chris Richards,Crystal Palace,Defender,4.5,22,4.888888888888889,4.89,4.5
-Antoine Semenyo,Bournemouth,Midfielder,7.5,36,4.8,4.8,7.5
-Martín Zubimendi Ibáñez,Arsenal,Midfielder,5.4,25,4.62962962962963,4.63,5.4
-Dan Burn,Newcastle,Defender,5.0,23,4.6,4.6,5.0
-Josh Cullen,Burnley,Midfielder,5.0,23,4.6,4.6,5.0
-Omar Alderete,Sunderland,Defender,4.0,18,4.5,4.5,4.0
-Tyrick Mitchell,Crystal Palace,Defender,5.0,22,4.4,4.4,5.0
-Enzo Fernández,Chelsea,Midfielder,6.6,29,4.3939393939393945,4.39,6.6
-Jordan Pickford,Everton,Goalkeeper,5.5,24,4.363636363636363,4.36,5.5
-Jaidon Anthony,Burnley,Midfielder,5.5,24,4.363636363636363,4.36,5.5
-David Raya Martín,Arsenal,Goalkeeper,5.5,24,4.363636363636363,4.36,5.5
-Daniel Muñoz Mejía,Crystal Palace,Defender,5.6,24,4.285714285714286,4.29,5.6
-João Pedro Junqueira de Jesus,Chelsea,Forward,7.7,33,4.285714285714286,4.29,7.7
-Hjalmar Ekdal,Burnley,Defender,4.0,17,4.25,4.25,4.0
-Gabriel Gudmundsson,Leeds,Defender,4.0,17,4.25,4.25,4.0
-Michael Keane,Everton,Defender,4.5,19,4.222222222222222,4.22,4.5
-Joachim Andersen,Fulham,Defender,4.5,19,4.222222222222222,4.22,4.5
+Marcos Senesi Barón,Bournemouth,Defender,4.7,37,7.872340425531915,7.87,4.7
+Marc Guéhi,Crystal Palace,Defender,4.7,36,7.659574468085106,7.66,4.7
+Trevoh Chalobah,Chelsea,Defender,5.1,38,7.450980392156863,7.45,5.1
+Robin Roefs,Sunderland,Goalkeeper,4.5,29,6.444444444444445,6.44,4.5
+Dan Burn,Newcastle,Defender,5.0,32,6.4,6.4,5.0
+Nick Pope,Newcastle,Goalkeeper,5.0,32,6.4,6.4,5.0
+Jaidon Anthony,Burnley,Midfielder,5.5,34,6.181818181818182,6.18,5.5
+Riccardo Calafiori,Arsenal,Defender,5.7,35,6.140350877192982,6.14,5.7
+Tino Livramento,Newcastle,Defender,5.1,31,6.07843137254902,6.08,5.1
+Jurriën Timber,Arsenal,Defender,5.8,35,6.0344827586206895,6.03,5.8
+Tyrick Mitchell,Crystal Palace,Defender,5.0,30,6.0,6.0,5.0
+Micky van de Ven,Spurs,Defender,4.7,28,5.957446808510638,5.96,4.7
+Moisés Caicedo Corozo,Chelsea,Midfielder,5.6,33,5.892857142857143,5.89,5.6
+Maxence Lacroix,Crystal Palace,Defender,5.1,30,5.882352941176471,5.88,5.1
+Guglielmo Vicario,Spurs,Goalkeeper,5.1,30,5.882352941176471,5.88,5.1
+Anton Stach,Leeds,Midfielder,5.0,29,5.8,5.8,5.0
+Chris Richards,Crystal Palace,Defender,4.5,26,5.777777777777778,5.78,4.5
+Cristian Romero,Spurs,Defender,5.1,29,5.686274509803922,5.69,5.1
+Joe Rodon,Leeds,Defender,4.0,22,5.5,5.5,4.0
+Omar Alderete,Sunderland,Defender,4.0,22,5.5,5.5,4.0
+Matty Cash,Aston Villa,Defender,4.6,25,5.434782608695652,5.43,4.6
+Josh Cullen,Burnley,Midfielder,5.0,27,5.4,5.4,5.0
+Adrien Truffert,Bournemouth,Defender,4.5,24,5.333333333333333,5.33,4.5
+Antoine Semenyo,Bournemouth,Midfielder,7.7,41,5.324675324675325,5.32,7.7
+Gabriel Gudmundsson,Leeds,Defender,4.0,21,5.25,5.25,4.0
+Joachim Andersen,Fulham,Defender,4.5,23,5.111111111111111,5.11,4.5
+Martín Zubimendi Ibáñez,Arsenal,Midfielder,5.4,27,5.0,5.0,5.4
+James Garner,Everton,Midfielder,5.0,25,5.0,5.0,5.0
+Ryan Gravenberch,Liverpool,Midfielder,5.5,27,4.909090909090909,4.91,5.5
+Tyrone Mings,Aston Villa,Defender,4.5,22,4.888888888888889,4.89,4.5
+Hjalmar Ekdal,Burnley,Defender,4.0,19,4.75,4.75,4.0
+James Tarkowski,Everton,Defender,5.5,26,4.7272727272727275,4.73,5.5
+David Raya Martín,Arsenal,Goalkeeper,5.5,26,4.7272727272727275,4.73,5.5
+Đorđe Petrović,Bournemouth,Goalkeeper,4.5,21,4.666666666666667,4.67,4.5
+Bafodé Diakité,Bournemouth,Defender,4.5,21,4.666666666666667,4.67,4.5
+Daniel Muñoz Mejía,Crystal Palace,Defender,5.6,26,4.642857142857143,4.64,5.6
+Tijjani Reijnders,Man City,Midfielder,5.6,26,4.642857142857143,4.64,5.6
+Wilson Isidor,Sunderland,Forward,5.5,25,4.545454545454546,4.55,5.5
+Jordan Pickford,Everton,Goalkeeper,5.5,25,4.545454545454546,4.55,5.5
+Nordi Mukiele,Sunderland,Defender,4.0,18,4.5,4.5,4.0
+João Pedro Junqueira de Jesus,Chelsea,Forward,7.8,35,4.487179487179487,4.49,7.8
+Enzo Fernández,Chelsea,Midfielder,6.7,30,4.477611940298507,4.48,6.7
+Pascal Struijk,Leeds,Defender,4.5,20,4.444444444444445,4.44,4.5
+Michael Keane,Everton,Defender,4.5,20,4.444444444444445,4.44,4.5
+Dean Henderson,Crystal Palace,Goalkeeper,5.0,22,4.4,4.4,5.0
+Richarlison de Andrade,Spurs,Forward,6.7,29,4.3283582089552235,4.33,6.7
+Iliman Ndiaye,Everton,Midfielder,6.5,28,4.3076923076923075,4.31,6.5
+Virgil van Dijk,Liverpool,Defender,6.1,26,4.262295081967213,4.26,6.1
+Martin Dúbravka,Burnley,Goalkeeper,4.0,17,4.25,4.25,4.0
+Trai Hume,Sunderland,Defender,4.5,19,4.222222222222222,4.22,4.5
+Djed Spence,Spurs,Defender,4.5,19,4.222222222222222,4.22,4.5
 Kieran Trippier,Newcastle,Defender,5.0,21,4.2,4.2,5.0
-James Garner,Everton,Midfielder,5.0,21,4.2,4.2,5.0
-Dean Henderson,Crystal Palace,Goalkeeper,5.0,21,4.2,4.2,5.0
+Marcus Tavernier,Bournemouth,Midfielder,5.5,23,4.181818181818182,4.18,5.5
 Fabian Schär,Newcastle,Defender,5.5,23,4.181818181818182,4.18,5.5
-James Tarkowski,Everton,Defender,5.5,23,4.181818181818182,4.18,5.5
-Reinildo Mandava,Sunderland,Defender,4.0,16,4.0,4.0,4.0
-Djed Spence,Spurs,Defender,4.5,18,4.0,4.0,4.5
-Tyrone Mings,Aston Villa,Defender,4.5,18,4.0,4.0,4.5
-Daniel Ballard,Sunderland,Defender,4.6,18,3.91304347826087,3.91,4.6
-Lucas Tolentino Coelho de Lima,West Ham,Midfielder,5.9,23,3.8983050847457625,3.9,5.9
+Daniel Ballard,Sunderland,Defender,4.6,19,4.130434782608696,4.13,4.6
+Gabriel dos Santos Magalhães,Arsenal,Defender,6.1,25,4.0983606557377055,4.1,6.1
+El Hadji Malick Diouf,West Ham,Defender,4.4,18,4.090909090909091,4.09,4.4
+Yankuba Minteh,Brighton,Midfielder,5.9,24,4.067796610169491,4.07,5.9
+Lucas Tolentino Coelho de Lima,West Ham,Midfielder,5.9,24,4.067796610169491,4.07,5.9
+Granit Xhaka,Sunderland,Midfielder,5.0,20,4.0,4.0,5.0
+Maxime Estève,Burnley,Defender,4.0,16,4.0,4.0,4.0
+Alex Iwobi,Fulham,Midfielder,6.5,26,4.0,4.0,6.5
+Pedro Porro Sauceda,Spurs,Defender,5.6,22,3.928571428571429,3.93,5.6
+Kiernan Dewsbury-Hall,Everton,Midfielder,5.0,19,3.8,3.8,5.0
 Pape Matar Sarr,Spurs,Midfielder,5.0,19,3.8,3.8,5.0
-Robert Lynch Sánchez,Chelsea,Goalkeeper,5.0,19,3.8,3.8,5.0
-Gabriel dos Santos Magalhães,Arsenal,Defender,6.1,23,3.7704918032786887,3.77,6.1
-Pedro Porro Sauceda,Spurs,Defender,5.6,21,3.7500000000000004,3.75,5.6
-Marcus Tavernier,Bournemouth,Midfielder,5.5,20,3.6363636363636362,3.64,5.5
-Virgil van Dijk,Liverpool,Defender,6.1,22,3.6065573770491803,3.61,6.1
-Kiernan Dewsbury-Hall,Everton,Midfielder,5.0,18,3.6,3.6,5.0
-Pascal Struijk,Leeds,Defender,4.5,16,3.5555555555555554,3.56,4.5
-Bafodé Diakité,Bournemouth,Defender,4.5,16,3.5555555555555554,3.56,4.5
-Jack Grealish,Everton,Midfielder,6.8,24,3.5294117647058822,3.53,6.8
-Nordi Mukiele,Sunderland,Defender,4.0,14,3.5,3.5,4.0
-El Hadji Malick Diouf,West Ham,Defender,4.4,15,3.4090909090909087,3.41,4.4
-Iliman Ndiaye,Everton,Midfielder,6.5,22,3.3846153846153846,3.38,6.5
-Đorđe Petrović,Bournemouth,Goalkeeper,4.5,15,3.3333333333333335,3.33,4.5
-Matty Cash,Aston Villa,Defender,4.5,15,3.3333333333333335,3.33,4.5
-Sepp van den Berg,Brentford,Defender,4.5,15,3.3333333333333335,3.33,4.5
-Trai Hume,Sunderland,Defender,4.5,15,3.3333333333333335,3.33,4.5
-Adrien Truffert,Bournemouth,Defender,4.5,15,3.3333333333333335,3.33,4.5
-Martin Dúbravka,Burnley,Goalkeeper,4.0,13,3.25,3.25,4.0
+Alex Scott,Bournemouth,Midfielder,5.0,19,3.8,3.8,5.0
+Mohammed Kudus,Spurs,Midfielder,6.6,25,3.787878787878788,3.79,6.6
+Calvin Bassey,Fulham,Defender,4.5,17,3.7777777777777777,3.78,4.5
+Jayden Bogle,Leeds,Defender,4.5,17,3.7777777777777777,3.78,4.5
+Lucas Bergvall,Spurs,Midfielder,5.4,20,3.7037037037037033,3.7,5.4
+Idrissa Gana Gueye,Everton,Midfielder,5.4,20,3.7037037037037033,3.7,5.4
+Hugo Ekitiké,Liverpool,Forward,8.7,32,3.6781609195402303,3.68,8.7
+Jack Grealish,Everton,Midfielder,6.8,25,3.6764705882352944,3.68,6.8
+João Maria Lobo Alves Palhares Costa Palhinha Gonçalves,Spurs,Midfielder,5.5,20,3.6363636363636362,3.64,5.5
+Ibrahima Konaté,Liverpool,Defender,5.5,20,3.6363636363636362,3.64,5.5
+Lyle Foster,Burnley,Forward,5.0,18,3.6,3.6,5.0
+Sepp van den Berg,Brentford,Defender,4.5,16,3.5555555555555554,3.56,4.5
+Reinildo Mandava,Sunderland,Defender,4.0,14,3.5,3.5,4.0
+Quilindschy Hartman,Burnley,Defender,4.0,14,3.5,3.5,4.0
+Sven Botman,Newcastle,Defender,4.9,17,3.4693877551020407,3.47,4.9
+Dan Ndoye,Nott'm Forest,Midfielder,6.1,21,3.4426229508196724,3.44,6.1
+Bernd Leno,Fulham,Goalkeeper,5.0,17,3.4,3.4,5.0
+Kenny Tete,Fulham,Defender,4.5,15,3.3333333333333335,3.33,4.5
+Michael Kayode,Brentford,Defender,4.5,15,3.3333333333333335,3.33,4.5
+Lucas Digne,Aston Villa,Defender,4.5,15,3.3333333333333335,3.33,4.5
+Elliot Anderson,Nott'm Forest,Midfielder,5.5,18,3.272727272727273,3.27,5.5
+Alisson Becker,Liverpool,Goalkeeper,5.5,18,3.272727272727273,3.27,5.5
+Yasin Ayari,Brighton,Midfielder,4.9,16,3.265306122448979,3.27,4.9
+Cody Gakpo,Liverpool,Midfielder,7.7,25,3.2467532467532467,3.25,7.7
+Dominik Szoboszlai,Liverpool,Midfielder,6.5,21,3.230769230769231,3.23,6.5
 Marc Cucurella Saseta,Chelsea,Defender,6.2,20,3.225806451612903,3.23,6.2
-Alex Scott,Bournemouth,Midfielder,5.0,16,3.2,3.2,5.0
-Bernd Leno,Fulham,Goalkeeper,5.0,16,3.2,3.2,5.0
-Granit Xhaka,Sunderland,Midfielder,5.0,16,3.2,3.2,5.0
-Dan Ndoye,Nott'm Forest,Midfielder,6.1,19,3.114754098360656,3.11,6.1
-Michael Kayode,Brentford,Defender,4.5,14,3.111111111111111,3.11,4.5
-Lucas Digne,Aston Villa,Defender,4.5,14,3.111111111111111,3.11,4.5
-Dominik Szoboszlai,Liverpool,Midfielder,6.5,20,3.076923076923077,3.08,6.5
-Quilindschy Hartman,Burnley,Defender,4.0,12,3.0,3.0,4.0
-Maxime Estève,Burnley,Defender,4.0,12,3.0,3.0,4.0
+Erling Haaland,Man City,Forward,14.3,46,3.2167832167832167,3.22,14.3
+Robert Lynch Sánchez,Chelsea,Goalkeeper,5.0,16,3.2,3.2,5.0
+Jake O'Brien,Everton,Defender,5.0,16,3.2,3.2,5.0
+Chemsdine Talbi,Sunderland,Midfielder,5.0,16,3.2,3.2,5.0
+Harry Maguire,Man Utd,Defender,4.4,14,3.1818181818181817,3.18,4.4
+Harry Wilson,Fulham,Midfielder,5.4,17,3.148148148148148,3.15,5.4
+Jarrod Bowen,West Ham,Forward,7.7,24,3.116883116883117,3.12,7.7
+Declan Rice,Arsenal,Midfielder,6.5,20,3.076923076923077,3.08,6.5
+Enzo Le Fée,Sunderland,Midfielder,4.9,15,3.061224489795918,3.06,4.9
+Keane Lewis-Potter,Brentford,Defender,5.0,15,3.0,3.0,5.0
 Nathan Collins,Brentford,Defender,5.0,15,3.0,3.0,5.0
-Jake O'Brien,Everton,Defender,5.0,15,3.0,3.0,5.0
-Cody Gakpo,Liverpool,Midfielder,7.7,23,2.987012987012987,2.99,7.7
-Richarlison de Andrade,Spurs,Forward,6.7,20,2.9850746268656714,2.99,6.7
-Tijjani Reijnders,Man City,Midfielder,5.7,17,2.982456140350877,2.98,5.7
-Lucas Bergvall,Spurs,Midfielder,5.4,16,2.962962962962963,2.96,5.4
-Ibrahima Konaté,Liverpool,Defender,5.5,16,2.909090909090909,2.91,5.5
-João Maria Lobo Alves Palhares Costa Palhinha Gonçalves,Spurs,Midfielder,5.5,16,2.909090909090909,2.91,5.5
-Alisson Becker,Liverpool,Goalkeeper,5.5,16,2.909090909090909,2.91,5.5
-Wilson Isidor,Sunderland,Forward,5.5,16,2.909090909090909,2.91,5.5
-Calvin Bassey,Fulham,Defender,4.5,13,2.888888888888889,2.89,4.5
-Kenny Tete,Fulham,Defender,4.5,13,2.888888888888889,2.89,4.5
-Jayden Bogle,Leeds,Defender,4.5,13,2.888888888888889,2.89,4.5
-Keane Lewis-Potter,Brentford,Defender,5.0,14,2.8,2.8,5.0
-Anton Stach,Leeds,Midfielder,5.0,14,2.8,2.8,5.0
-Chemsdine Talbi,Sunderland,Midfielder,5.0,14,2.8,2.8,5.0
-Ismaïla Sarr,Crystal Palace,Midfielder,6.5,18,2.769230769230769,2.77,6.5
-Mohammed Kudus,Spurs,Midfielder,6.6,18,2.7272727272727275,2.73,6.6
-Hugo Ekitiké,Liverpool,Forward,8.8,24,2.727272727272727,2.73,8.8
-Brennan Johnson,Spurs,Midfielder,7.1,19,2.676056338028169,2.68,7.1
-William Saliba,Arsenal,Defender,6.0,16,2.6666666666666665,2.67,6.0
-Dango Ouattara,Brentford,Midfielder,6.0,16,2.6666666666666665,2.67,6.0
-Lucas Estella Perri,Leeds,Goalkeeper,4.5,12,2.6666666666666665,2.67,4.5
-Leny Yoro,Man Utd,Defender,4.5,12,2.6666666666666665,2.67,4.5
-Enzo Le Fée,Sunderland,Midfielder,4.9,13,2.6530612244897958,2.65,4.9
-Erling Haaland,Man City,Forward,14.1,37,2.624113475177305,2.62,14.1
-Declan Rice,Arsenal,Midfielder,6.5,17,2.6153846153846154,2.62,6.5
-Matthijs de Ligt,Man Utd,Defender,5.0,13,2.6,2.6,5.0
-Rico Lewis,Man City,Defender,5.0,13,2.6,2.6,5.0
-Jordan Henderson,Brentford,Midfielder,5.0,13,2.6,2.6,5.0
-Rúben dos Santos Gato Alves Dias,Man City,Defender,5.5,14,2.5454545454545454,2.55,5.5
-Elliot Anderson,Nott'm Forest,Midfielder,5.5,14,2.5454545454545454,2.55,5.5
-Yankuba Minteh,Brighton,Midfielder,5.9,15,2.542372881355932,2.54,5.9
-Lamare Bogarde,Aston Villa,Defender,4.0,10,2.5,2.5,4.0
-Callum Hudson-Odoi,Nott'm Forest,Midfielder,6.0,15,2.5,2.5,6.0
-Igor Thiago Nascimento Rodrigues,Brentford,Forward,6.0,15,2.5,2.5,6.0
-Mitoma Kaoru,Brighton,Midfielder,6.4,16,2.5,2.5,6.4
-Tosin Adarabioyo,Chelsea,Defender,4.5,11,2.4444444444444446,2.44,4.5
-Yehor Yarmoliuk,Brentford,Midfielder,5.0,12,2.4,2.4,5.0
-Lyle Foster,Burnley,Forward,5.0,12,2.4,2.4,5.0
-David Brooks,Bournemouth,Midfielder,5.0,12,2.4,2.4,5.0
-Saša Lukić,Fulham,Midfielder,5.0,12,2.4,2.4,5.0
-Chris Wood,Nott'm Forest,Forward,7.6,18,2.368421052631579,2.37,7.6
-Jérémy Doku,Man City,Midfielder,6.4,15,2.34375,2.34,6.4
-Francisco Evanilson de Lima Barbosa,Bournemouth,Forward,7.0,16,2.2857142857142856,2.29,7.0
-Josh Acheampong,Chelsea,Defender,4.0,9,2.25,2.25,4.0
-James Hill,Bournemouth,Defender,4.0,9,2.25,2.25,4.0
-James Trafford,Man City,Goalkeeper,4.9,11,2.2448979591836733,2.24,4.9
-Ezri Konsa Ngoyo,Aston Villa,Defender,4.5,10,2.2222222222222223,2.22,4.5
-Viktor Gyökeres,Arsenal,Forward,9.0,20,2.2222222222222223,2.22,9.0
+William Saliba,Arsenal,Defender,6.0,18,3.0,3.0,6.0
+David Brooks,Bournemouth,Midfielder,5.0,15,3.0,3.0,5.0
+Jordan Henderson,Brentford,Midfielder,5.0,15,3.0,3.0,5.0
+Matthijs de Ligt,Man Utd,Defender,5.0,15,3.0,3.0,5.0
+Rúben dos Santos Gato Alves Dias,Man City,Defender,5.5,16,2.909090909090909,2.91,5.5
+Lewis Dunk,Brighton,Defender,4.5,13,2.888888888888889,2.89,4.5
+Leny Yoro,Man Utd,Defender,4.5,13,2.888888888888889,2.89,4.5
+Bruno Borges Fernandes,Man Utd,Midfielder,9.0,26,2.888888888888889,2.89,9.0
+Brennan Johnson,Spurs,Midfielder,7.0,20,2.857142857142857,2.86,7.0
+Igor Thiago Nascimento Rodrigues,Brentford,Forward,6.0,17,2.8333333333333335,2.83,6.0
+Dango Ouattara,Brentford,Midfielder,6.0,17,2.8333333333333335,2.83,6.0
+Ismaïla Sarr,Crystal Palace,Midfielder,6.4,18,2.8125,2.81,6.4
+Jérémy Doku,Man City,Midfielder,6.4,18,2.8125,2.81,6.4
+Mitoma Kaoru,Brighton,Midfielder,6.4,18,2.8125,2.81,6.4
+Yehor Yarmoliuk,Brentford,Midfielder,5.0,14,2.8,2.8,5.0
+Tyler Adams,Bournemouth,Midfielder,5.0,14,2.8,2.8,5.0
+Neco Williams,Nott'm Forest,Defender,5.0,14,2.8,2.8,5.0
+Lamare Bogarde,Aston Villa,Defender,4.0,11,2.75,2.75,4.0

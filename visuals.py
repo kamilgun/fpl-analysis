@@ -19,9 +19,8 @@ def graphics_selected_vs_points(players):
     # convert column to float
     players['selected_by_percent'] = pd.to_numeric(players['selected_by_percent'], errors='coerce')
 
-    st.title("Selection Rate vs Total Points")
-    st.markdown("Displaying players based on their selection rates")
-    st.markdown("You can examine less-preferred players with good ratings or more-preferred players with ineffective scores")
+    st.title("👥 Selection Rate vs Total Points")
+    st.markdown("Displaying players based on their selection rates. You can examine less-preferred players with good ratings or more-preferred players with ineffective scores.")
     st.markdown("Y-Axis: Total Points | X-Axis: Selection Rate (%)")
 
     # Get filter from user
@@ -54,9 +53,8 @@ def graphics_value_vs_points():
     
     df = pd.read_csv("./player_stats.csv")
 
-    st.title("FPL Efficiency Analysis")
-    st.markdown("Examining players with the highest ratings relative to their value")
-    st.markdown("Everyone knows about Salah or Haaland")
+    st.title("📈 FPL Efficiency Analysis")
+    st.markdown("Examining players with the highest ratings relative to their value. Of course, everyone knows about Salah or Haaland")
     st.markdown("Here are some budget-friendly players who bring in high scores despite their low cost")
 
     # Position selection
@@ -81,7 +79,7 @@ def graphics_value_vs_points():
     )  
 
 def player_advice(players):
-    st.title("Scout Assisant - Adviced Players")
+    st.title("🧭 Scout Assisant - Adviced Players")
     st.markdown("Here you can perform a detailed search for each position, including the player's playing time, value and selection rate in your search.")
     
     position = st.selectbox("Position", ["All", "Goalkeeper", "Defence", "Midfielder", "Forward"])
@@ -146,7 +144,7 @@ def team_dependency_ratio():
     # 🔧 TDR calculation
     merged["TDR"] = merged["contribution"] / merged["team_total_goals"]
 
-    st.title("Team Dependency Ratio (TDR) Analysis")
+    st.title("🏟️ Team Dependency Ratio (TDR) Analysis")
     st.markdown("The player who contributed the most points to each team is listed in this panel.")
     st.markdown("Sometimes a player takes the scoring load off their team. If you think that team will win the week, you should definitely check it out!")
     
@@ -194,9 +192,9 @@ def consistency_index():
     # 4. Stability score
     consistency["consistency_index"] = consistency["mean"] / consistency["std"].replace(0, 1)
 
-    st.title("Consistency Index Analysis")
+    st.title("🔄 Consistency Index Analysis")
     st.markdown("Examining a player's weekly points distribution to show how stable or surprising their profile is.")
-    st.markdown("Does a player consistently score the same, or does he fly for a week and then go quiet for a long time? Here wo go!")
+    st.markdown("Does a player consistently score the same, or does he fly for a week and then go quiet for a long time? Here we go!")
     
 
     consistency = consistency.merge(

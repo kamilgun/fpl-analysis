@@ -42,7 +42,6 @@ def get_fpl_players_history():
     history_df = pd.concat(all_history, ignore_index=True)
 
     history_df.to_csv("./weekly_points.csv", index=False, encoding='utf-8-sig')
-    history_df.to_csv("./fpl_stats/weekly_points.csv", index=False, encoding='utf-8-sig')
     return history_df, players
 
 def fpl_value_calc():
@@ -86,7 +85,7 @@ def fpl_value_calc():
 
     print("Şu anki çalışma dizini:", os.getcwd())
     # Klasör varsa geç, yoksa oluştur
-    os.makedirs("verianalizi/fpl_stats", exist_ok=True)
+    #os.makedirs("verianalizi/fpl_stats", exist_ok=True)
 
     # Get only required columns
     table_data = top_value_players[['name', 'team_name', 'position', 'now_cost', 'total_points', 'value_ratio']].copy()
@@ -108,7 +107,6 @@ def fpl_value_calc():
 
 
     table_data.to_csv("./player_stats.csv", index=False, encoding='utf-8-sig')
-    table_data.to_csv("./fpl_stats/player_stats.csv", index=False, encoding='utf-8-sig')
 
 def pl_table():
     url = "https://api.football-data.org/v4/competitions/PL/standings"
@@ -128,4 +126,4 @@ def pl_table():
 
 #get_fpl_players_history()
 #fpl_value_calc()
-#pl_table()
+pl_table()
