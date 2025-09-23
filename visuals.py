@@ -257,7 +257,7 @@ def read_pl_table(csv_path="./league_table.csv"):
         "goalsFor", "goalsAgainst", "goalDifference", "points"
     ]].sort_values("position").reset_index(drop=True)
     return standings
-
+ 
 import textwrap
 def render_standings_html(df: pd.DataFrame) -> str:
     html = textwrap.dedent("""\
