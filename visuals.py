@@ -26,7 +26,7 @@ def graphics_selected_vs_points(players):
     # Get filter from user
     min_sel = st.slider("Min selection rate (%)", 0.0, 100.0, 3.0)
     max_sel = st.slider("Max selection rate (%)", 0.0, 100.0, 10.0)
-
+  
     # Filter
     filtered = players[
         (players['selected_by_percent'] >= min_sel) &
