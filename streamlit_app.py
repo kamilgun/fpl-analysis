@@ -38,7 +38,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
+  
 # --- Global CSS for card style ---
 st.markdown("""
     <style>

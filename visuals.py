@@ -13,7 +13,7 @@ data = response.json()
 # Export data to DataFrame
 players = pd.DataFrame(data['elements'])
 teams = pd.DataFrame(data['teams'])
-
+  
 def graphics_selected_vs_points(players):
 
     # convert column to float
@@ -26,6 +26,7 @@ def graphics_selected_vs_points(players):
     # Get filter from user
     min_sel = st.slider("Min selection rate (%)", 0.0, 100.0, 3.0)
     max_sel = st.slider("Max selection rate (%)", 0.0, 100.0, 10.0)
+  
   
     # Filter
     filtered = players[
