@@ -126,4 +126,4 @@ def pl_table():
 
 #get_fpl_players_history()
 #fpl_value_calc()
-pl_table()
+#pl_table()
