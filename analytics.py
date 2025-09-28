@@ -64,7 +64,7 @@ def suggest_triple_captain(user_id, data, fixtures):
         best = candidates.sort_values("form", ascending=False).iloc[0]
         return f"🎯 Alternative  Triple Captain candidate: {best['web_name']} ({teams.loc[best['team']-1,'name']}) - Form {best['form']}, easy fixture ({best['team_difficulty']})"
     
-    # --- Nothing found, explain why
+    # --- Nothing found, explain why 
     reasons = []
     if len(doubles) == 0:
         reasons.append("No Double GW")

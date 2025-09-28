@@ -101,7 +101,7 @@ def fpl_value_calc():
     table_data['now_cost'] = result['now_cost'].round(1)
 
     #print(result.to_string(index=False))
-    print("Satır sayısı:", len(table_data))
+    print("Satır sayısı:", len(table_data)) 
 
     print(table_data.head())  # İlk birkaç satırı yazdır
 
