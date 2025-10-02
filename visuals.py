@@ -13,7 +13,7 @@ data = response.json()
 # Export data to DataFrame
 players = pd.DataFrame(data['elements'])
 teams = pd.DataFrame(data['teams'])
-  
+   
 def graphics_selected_vs_points(players):
 
     # convert column to float

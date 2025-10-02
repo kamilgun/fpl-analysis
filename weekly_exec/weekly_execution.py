@@ -122,7 +122,7 @@ def pl_table():
 
     df.to_csv("./league_table.csv", index=False, encoding='utf-8-sig')
 
-
+ 
 
 #get_fpl_players_history()
 #fpl_value_calc()

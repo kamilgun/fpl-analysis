@@ -79,7 +79,7 @@ def suggest_triple_captain(user_id, data, fixtures):
 
 
 def check_wildcard(user_id, data, fixtures, lookahead_gw=5, form_weeks=5,
-                   form_threshold_count=3, fdr_threshold=3.6, injured_threshold=0.25):
+                   form_threshold_count=3, fdr_threshold=3.6, injured_threshold=0.25): 
     """
 Wildcard check (more robust version).
 - user_id: FPL entry id (int or str)

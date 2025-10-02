@@ -58,7 +58,7 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
-
+ 
 # --- 3x3 Grid Layout with cards ---
 rows = []
 for _ in range(3):

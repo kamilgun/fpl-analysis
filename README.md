@@ -15,4 +15,4 @@ Fantasy Premier League (FPL) players data analysis.
 - `pandas`
 - `requests`
 
-Data is pulled from the fantasy.premierleague.com API. 
+Data is pulled from the fantasy.premierleague.com API.
