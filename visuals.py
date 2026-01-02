@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import altair as alt
 import ast
+from paths import DATA_DIR
 
 # Get data from FPL API
 url = "https://fantasy.premierleague.com/api/bootstrap-static/"
@@ -52,18 +53,34 @@ def graphics_selected_vs_points(players):
 
 def graphics_value_vs_points():
     
-    df = pd.read_csv("./player_stats.csv")
+    #df = pd.read_csv("./player_stats.csv")
+    df  = pd.read_csv(DATA_DIR / "player_stats.csv")
 
     st.title("📈 FPL Efficiency Analysis")
     st.markdown("Examining players with the highest ratings relative to their value. Of course, everyone knows about Salah or Haaland")
     st.markdown("Here are some budget-friendly players who bring in high scores despite their low cost")
 
     # Position selection
-    pozisyonlar = ["All Players"] + sorted(df["Position"].unique())
-    secilen_pozisyon = st.selectbox("Filter by Position", pozisyonlar)
+    # pozisyonlar = ["All Players"] + sorted(df["Position"].unique())
+    # secilen_pozisyon = st.selectbox("Filter by Position", pozisyonlar)
 
-    if secilen_pozisyon != "All Players":
-        df = df[df["Position"] == secilen_pozisyon]
+    # Futbol mantığına uygun manuel sıralama
+    position_order = [
+        "All Players",
+        "Goalkeeper",
+        "Defender",
+        "Midfielder",
+        "Forward",
+    ]
+
+    selected_position = st.selectbox(
+        "Filter by Position",
+        options=position_order,
+        index=0  # default: All Players
+    )
+
+    if selected_position != "All Players":
+        df = df[df["Position"] == selected_position]
 
     # Calculate efficiency (points / value)
     df["point_per_value"] = df["Points/Value"]
@@ -71,13 +88,26 @@ def graphics_value_vs_points():
     # Sort by efficiency
     df = df.sort_values("point_per_value", ascending=False)    
 
-    # 📋 Table
+    """ # 📋 Table
     st.dataframe(
         df[["Player", "Team", "Position", "Value", "Points", "value_ratio"]].head(120)
         .sort_values("value_ratio", ascending=False)
         .reset_index(drop=True),
         height=600
-    )  
+    )  """ 
+
+    # 📋 Table
+    table_df = (
+        df[["Player", "Team", "Position", "Value", "Points", "value_ratio"]]
+        .head(120)
+        .sort_values("value_ratio", ascending=False)
+        .reset_index(drop=True)
+    )
+
+    # index'i 1'den başlat
+    table_df.index = table_df.index + 1
+
+    st.dataframe(table_df, height=900)
 
 def player_advice(players):
     st.title("🧭 Scout Assisant - Adviced Players")
@@ -123,12 +153,23 @@ def player_advice(players):
     filtered_players["value_ratio"] = filtered_players["total_points"] / filtered_players["cost_million"]
     filtered_players = filtered_players.sort_values("value_ratio", ascending=False)
 
+    # # 📋 Table
+    # st.dataframe(
+    #     filtered_players[["web_name", "team", "position_name", "cost_million", "total_points", "selected_by_percent", "value_ratio"]]
+    #     .sort_values("value_ratio", ascending=False)
+    #     .reset_index(drop=True)
+    # )
     # 📋 Table
-    st.dataframe(
+    table_df = (
         filtered_players[["web_name", "team", "position_name", "cost_million", "total_points", "selected_by_percent", "value_ratio"]]
         .sort_values("value_ratio", ascending=False)
         .reset_index(drop=True)
     )
+
+    # index'i 1'den başlat
+    table_df.index = table_df.index + 1
+
+    st.dataframe(table_df, height=600)
 
 def team_dependency_ratio():
     # 🏃‍♂️ Player contribution
@@ -143,7 +184,7 @@ def team_dependency_ratio():
     merged = merged.merge(team_goals, left_on="team", right_on="team_id", how="left")
 
     # 🔧 TDR calculation
-    merged["TDR"] = merged["contribution"] / merged["team_total_goals"]
+    merged["TDR"] =  (merged["contribution"] / merged["team_total_goals"]).round(2)
 
     st.title("🏟️ Team Dependency Ratio (TDR) Analysis")
     st.markdown("The player who contributed the most points to each team is listed in this panel.")
@@ -175,14 +216,33 @@ def team_dependency_ratio():
 
     # -----------------------------
     # 📋 Table
-    st.dataframe(
+    # st.dataframe(
+    #     team_leaders[["first_name", "second_name", "name", "goals_scored", "assists", "contribution", "team_total_goals", "TDR"]]
+    #     .sort_values("TDR", ascending=False)
+    #     .reset_index(drop=True)
+    # )
+
+    table_df = (
         team_leaders[["first_name", "second_name", "name", "goals_scored", "assists", "contribution", "team_total_goals", "TDR"]]
         .sort_values("TDR", ascending=False)
         .reset_index(drop=True)
-    )          
+    )
+
+    # index'i 1'den başlat
+    table_df.index = table_df.index + 1
+
+    table_df = table_df.rename(columns={
+        "goals_scored": "scored",
+        "team_total_goals": "team goals",
+        "first_name": "first name", 
+        "second_name":  "second name",
+    })
+
+    st.dataframe(table_df)      
    
 def consistency_index():
-    history_df = pd.read_csv("./weekly_exec/weekly_points.csv")
+    #history_df = pd.read_csv("./weekly_exec/weekly_points.csv")
+    history_df = pd.read_csv(DATA_DIR / "weekly_points.csv")
 
     consistency = (
         history_df.groupby("player_id")["total_points"]
@@ -234,19 +294,51 @@ def consistency_index():
 
     # -----------------------------
     # 7. Table
-    st.dataframe(
-        consistency[["first_name", "second_name", "total_points", "mean", "std", "consistency_index"]]
+    # st.dataframe(
+    #     consistency[["first_name", "second_name", "total_points", "mean", "std", "consistency_index"]]
+    #     .sort_values("consistency_index", ascending=False)
+    #     .reset_index(drop=True)
+    #     .style.format({
+    #       "mean": "{:.2f}",
+    #       "std": "{:.2f}",
+    #       "consistency_index": "{:.2f}"
+    #   })
+    # )
+    table_df = (
+        consistency[[
+            "first_name",
+            "second_name",
+            "total_points",
+            "mean",
+            "std",
+            "consistency_index"
+        ]]
         .sort_values("consistency_index", ascending=False)
         .reset_index(drop=True)
-        .style.format({
-          "mean": "{:.2f}",
-          "std": "{:.2f}",
-          "consistency_index": "{:.2f}"
-      })
     )
 
-def read_pl_table(csv_path="./league_table.csv"):
-    df = pd.read_csv(csv_path)
+    # index'i 1'den başlat
+    table_df.index = table_df.index + 1
+
+    # kolon isimlerini değiştir
+    table_df = table_df.rename(columns={
+        "consistency_index": "consistency index",
+        "total_points": "total points",
+        "first_name": "first name",
+        "second_name": "second name",
+    })
+
+    # EN SON stil uygula
+    table_df = table_df.style.format({
+        "mean": "{:.2f}",
+        "std": "{:.2f}",
+        "consistency index": "{:.2f}",
+    })
+
+    st.dataframe(table_df, height=500)
+
+def read_pl_table():
+    df  = pd.read_csv(DATA_DIR / "league_table.csv")
 
     # Convert team column to dict
     df["team"] = df["team"].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
@@ -321,7 +413,7 @@ import streamlit.components.v1 as components
 
 def show_table():
     st.title("🏆 Premier League Table")
-    standings = read_pl_table("./league_table.csv")
+    standings = read_pl_table()
     html = render_standings_html(standings)  
     components.html(html, height=950, scrolling=True)
 
@@ -389,7 +481,7 @@ def fixture_difficulty_analysis():
         cmap="RdYlGn_r", subset=["Avg Difficulty (next 5 GWs)"]
     ).format({"Avg Difficulty (next 5 GWs)": "{:.2f}"})
 
-    st.dataframe(styled_avg, use_container_width=True)
+    st.dataframe(styled_avg, use_container_width=True,  hide_index=True)
 
     # Detailed table (competitor name + difficulty)
     st.write("### Fixture Difficulty Detailed")
@@ -399,18 +491,50 @@ def fixture_difficulty_analysis():
 
 def show_player_stats():
     st.title("📊 Player Statistics – Dynamic Ranking")
-    
-    # Possibility of choice for the user
-    metrics = [""] + ["total_points", "now_cost", "minutes", "goals_scored", "assists", "ict_index"]
-    metric_choice = st.selectbox("Select sorting criteria:", metrics, index=0) 
 
-    order_choice = st.radio("Sort direction:", ["Descending", "Ascending"])
-    ascending = True if order_choice == "Ascending" else False
+    # Kullanıcıya görünen isim -> DataFrame kolon adı
+    METRIC_ALIASES = {
+        "Total Points": "total_points",
+        "Price (£m)": "now_cost",        # not: FPL'de now_cost genelde 10x gelir (örn 75 = 7.5)
+        "Minutes": "minutes",
+        "Goals": "goals_scored",
+        "Assists": "assists",
+        "ICT Index": "ict_index",
+    }
 
-    merged_players = players.merge(teams[["id", "name"]], left_on="team", right_on="id", how="left")
+    # Futbol mantığına uygun sıra (alfabetik değil)
+    metric_labels = list(METRIC_ALIASES.keys())
 
-    # Sorted table
-    if metric_choice:
-        sorted_df = merged_players.sort_values(metric_choice, ascending=ascending)
-        st.dataframe(sorted_df[["first_name", "second_name", "name", metric_choice]].head(50)
-                     )    
+    metric_label = st.selectbox(
+        "Select sorting criteria:",
+        metric_labels,
+        index=0  # default: Total Points -> tablo hemen gelsin
+    )
+    metric_choice = METRIC_ALIASES[metric_label]
+
+    order_choice = st.radio("Sort direction:", ["Descending", "Ascending"], index=0)
+    ascending = (order_choice == "Ascending")
+
+    merged_players = players.merge(
+        teams[["id", "name"]],
+        left_on="team",
+        right_on="id",
+        how="left"
+    )
+
+    # İsteğe bağlı: price'ı düzgün göstermek (now_cost çoğu zaman 10x)
+    if metric_choice == "now_cost":
+        merged_players["now_cost"] = merged_players["now_cost"] / 10
+
+    sorted_df = merged_players.sort_values(metric_choice, ascending=ascending)
+
+    # Player adını birleştir
+    sorted_df["Player"] = (sorted_df["first_name"].fillna("") + " " + sorted_df["second_name"].fillna("")).str.strip()
+
+    # Ekranda kolon başlığı alias görünsün
+    out = sorted_df[["Player", "name", metric_choice]].head(50).rename(columns={
+        "name": "Team",
+        metric_choice: metric_label
+    })
+
+    st.dataframe(out, use_container_width=True, hide_index=True)

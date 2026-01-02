@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 import time
+from paths import DATA_DIR
 
 # Get data from FPL API
 url = "https://fantasy.premierleague.com/api/bootstrap-static/"
@@ -16,6 +17,7 @@ def get_fpl_players_history():
     Tüm oyuncuların 'element-summary' datasını çekip
     history (GW performansları) datasını tek bir DataFrame olarak döner.
     """
+    print("get_fpl_players_history executed")
     # 1. Önce bootstrap'ten tüm oyuncuların id'lerini al
     player_ids = players["id"].tolist()
 
@@ -41,7 +43,9 @@ def get_fpl_players_history():
     # 3. Tüm history'leri birleştir
     history_df = pd.concat(all_history, ignore_index=True)
 
-    history_df.to_csv("./weekly_points.csv", index=False, encoding='utf-8-sig')
+    #history_df.to_csv("./weekly_points.csv", index=False, encoding='utf-8-sig')
+    history_df.to_csv(DATA_DIR / "weekly_points.csv", index=False, encoding='utf-8-sig')
+
     return history_df, players
 
 def fpl_value_calc():
@@ -106,7 +110,7 @@ def fpl_value_calc():
     print(table_data.head())  # İlk birkaç satırı yazdır
 
 
-    table_data.to_csv("./player_stats.csv", index=False, encoding='utf-8-sig')
+    table_data.to_csv(DATA_DIR / "player_stats.csv", index=False, encoding='utf-8-sig')
 
 def pl_table():
     url = "https://api.football-data.org/v4/competitions/PL/standings"
@@ -120,10 +124,10 @@ def pl_table():
     # İstediğin kolonları seçebilirsin, ör:
     # df = df[["position", "team", "playedGames", "won", "draw", "lost", "points", "goalDifference"]]
 
-    df.to_csv("./league_table.csv", index=False, encoding='utf-8-sig')
+    #df.to_csv("./league_table.csv", index=False, encoding='utf-8-sig')
+    df.to_csv(DATA_DIR / "league_table.csv", index=False, encoding='utf-8-sig')
 
  
-
-#get_fpl_players_history()
-#fpl_value_calc()
-#pl_table()
+get_fpl_players_history()
+fpl_value_calc()
+pl_table()

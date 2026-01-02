@@ -58,12 +58,12 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
- 
+   
 # --- 3x3 Grid Layout with cards ---
 rows = []
 for _ in range(3):
     rows.append(st.columns(3))
-
+     
 # 1. satır
 with rows[0][0]:
     with st.container():
