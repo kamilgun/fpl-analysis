@@ -1,15 +1,41 @@
 import streamlit as st
+import os
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 import altair as alt
 import ast
 from paths import DATA_DIR
-   
+import time
+from functools import wraps
+
+@st.cache_data
+def _read_csv_cached(path: str, mtime: float) -> pd.DataFrame:
+    return pd.read_csv(path)
+
+def load_csv(path) -> pd.DataFrame:
+    # path: str veya Path olabilir
+    path_str = str(path)
+    return _read_csv_cached(path_str, os.path.getmtime(path_str))
+
+# def timed(name: str):
+#     def decorator(fn):
+#         @wraps(fn)
+#         def wrapper(*args, **kwargs):
+#             start = time.perf_counter()
+#             result = fn(*args, **kwargs)
+#             duration = time.perf_counter() - start
+#             st.caption(f"⏱️ {name}: {duration:.2f} s")
+#             return result
+#         return wrapper
+#     return decorator
+
+# @timed("graphics_selected_vs_points")
 def graphics_selected_vs_points(players):
 
+    ply = players.copy()
     # convert column to float
-    players['selected_by_percent'] = pd.to_numeric(players['selected_by_percent'], errors='coerce')
+    ply['selected_by_percent'] = pd.to_numeric(players['selected_by_percent'], errors='coerce')
 
     st.title("👥 Selection Rate vs Total Points")
     st.markdown("Displaying players based on their selection rates. You can examine less-preferred players with good ratings or more-preferred players with ineffective scores.")
@@ -21,10 +47,10 @@ def graphics_selected_vs_points(players):
    
   
     # Filter
-    filtered = players[
-        (players['selected_by_percent'] >= min_sel) &
-        (players['selected_by_percent'] <= max_sel) &
-        (players['total_points'] > 0)
+    filtered = ply[
+        (ply['selected_by_percent'] >= min_sel) &
+        (ply['selected_by_percent'] <= max_sel) &
+        (ply['total_points'] > 0)
     ]
 
     # Create Graphics
@@ -42,10 +68,12 @@ def graphics_selected_vs_points(players):
     # Publish to streamlit
     st.pyplot(fig)
 
+# @timed("graphics_value_vs_points")
 def graphics_value_vs_points():
     
     #df = pd.read_csv("./player_stats.csv")
-    df  = pd.read_csv(DATA_DIR / "player_stats.csv")
+    # df  = pd.read_csv(DATA_DIR / "player_stats.csv")
+    df = load_csv(DATA_DIR / "player_stats.csv")
 
     st.title("📈 FPL Efficiency Analysis")
     st.markdown("Examining players with the highest ratings relative to their value. Of course, everyone knows about Salah or Haaland")
@@ -70,7 +98,7 @@ def graphics_value_vs_points():
         index=0  # default: All Players
     )
 
-    if selected_position != "All Players":
+    if selected_position != "All Players": 
         df = df[df["Position"] == selected_position]
 
     # Calculate efficiency (points / value)
@@ -81,7 +109,7 @@ def graphics_value_vs_points():
 
     """ # 📋 Table
     st.dataframe(
-        df[["Player", "Team", "Position", "Value", "Points", "value_ratio"]].head(120)
+        df[["Player", "Team", "Position", "Value", "Points", "Value Ratio"]].head(120)
         .sort_values("value_ratio", ascending=False)
         .reset_index(drop=True),
         height=600
@@ -100,8 +128,9 @@ def graphics_value_vs_points():
 
     st.dataframe(table_df, height=900)
 
+# @timed("player_advice")
 def player_advice(players):
-    st.title("🧭 Scout Assisant - Adviced Players")
+    st.title("🧭 Scout Assistant - Adviced Players")
     st.markdown("Here you can perform a detailed search for each position, including the player's playing time, value and selection rate in your search.")
     
     position = st.selectbox("Position", ["All", "Goalkeeper", "Defence", "Midfielder", "Forward"])
@@ -117,23 +146,23 @@ def player_advice(players):
         3: "Midfielder",
         4: "Forward"
     }
-
+    ply = players.copy()
     # Converting now_cost from 10x to float
-    players["cost_million"] = players["now_cost"] / 10
+    ply["cost_million"] = ply["now_cost"] / 10
 
     # Adding position name
-    players["position_name"] = players["element_type"].map(position_map)
+    ply["position_name"] = ply["element_type"].map(position_map)
 
     # Convert selected_by_percent to float
-    players["selected_by_percent"] = players["selected_by_percent"].astype(float)
+    ply["selected_by_percent"] = ply["selected_by_percent"].astype(float)
 
     # Filtering
-    filtered_players = players[
-        (players["cost_million"] <= cost_limit) &
-        (players["minutes"] >= min_minutes) &
-        (players["total_points"] >= min_points) &
-        (players["selected_by_percent"] >= sel_range[0]) &
-        (players["selected_by_percent"] <= sel_range[1]) 
+    filtered_players = ply[
+        (ply["cost_million"] <= cost_limit) &
+        (ply["minutes"] >= min_minutes) &
+        (ply["total_points"] >= min_points) &
+        (ply["selected_by_percent"] >= sel_range[0]) &
+        (ply["selected_by_percent"] <= sel_range[1]) 
     ]
     
     # Position filter - if not "All"
@@ -216,7 +245,7 @@ def compute_team_dependency_ratio(players: pd.DataFrame, teams: pd.DataFrame) ->
 
     return out
 
-
+# @timed("team_dependency_ratio")
 def team_dependency_ratio(players: pd.DataFrame, teams: pd.DataFrame) -> None:
     st.title("🏟️ Team Dependency Ratio (TDR) Analysis")
     st.markdown("The player who contributed the most points to each team is listed in this panel.")
@@ -263,72 +292,13 @@ def team_dependency_ratio(players: pd.DataFrame, teams: pd.DataFrame) -> None:
     st.dataframe(
         table_df.style.format({"TDR": "{:.0%}"}),
         use_container_width=True
-    )    
+    )      
 
-""" def team_dependency_ratio(players, teams):
-    # 🏃‍♂️ Player contribution
-    players["contribution"] = players["goals_scored"] + players["assists"]
-
-    # 🏟️ Calculate total team goals
-    team_goals = players.groupby("team")["goals_scored"].sum().reset_index()
-    team_goals.rename(columns={"goals_scored": "team_total_goals", "team": "team_id"}, inplace=True)
-
-    # Merge: players + teams + team_goals
-    merged = players.merge(teams[["id", "name", "short_name"]], left_on="team", right_on="id", how="left")
-    merged = merged.merge(team_goals, left_on="team", right_on="team_id", how="left")
-
-    # 🔧 TDR calculation
-    merged["TDR"] =  (merged["contribution"] / merged["team_total_goals"]).round(2)
-
-    st.title("🏟️ Team Dependency Ratio (TDR) Analysis")
-    st.markdown("The player who contributed the most points to each team is listed in this panel.")
-    st.markdown("Sometimes a player takes the scoring load off their team. If you think that team will win the week, you should definitely check it out!")
-    
-
-    
-    team_leaders = (
-        merged.sort_values("TDR", ascending=False)
-        .drop_duplicates(subset=["team"])   # The player with the highest TDR for each team remains
-        .reset_index(drop=True)
-    )
-
-    # -----------------------------
-    # 📊 Visual
-    chart = (
-        alt.Chart(team_leaders)
-        .mark_bar()
-        .encode(
-            x=alt.X("short_name:N", title="Team"),
-            y=alt.Y("TDR:Q", axis=alt.Axis(format="%"), title="Team Dependency Ratio"),
-            color="name:N",
-            tooltip=["first_name", "second_name", "name", "goals_scored", "assists", "contribution", "team_total_goals", alt.Tooltip("TDR", format=".0%")]
-        )
-        .properties(height=400)
-    )
-
-    st.altair_chart(chart, use_container_width=True)
-
-    table_df = (
-        team_leaders[["first_name", "second_name", "name", "goals_scored", "assists", "contribution", "team_total_goals", "TDR"]]
-        .sort_values("TDR", ascending=False)
-        .reset_index(drop=True)
-    )
-
-    # index'i 1'den başlat
-    table_df.index = table_df.index + 1
-
-    table_df = table_df.rename(columns={
-        "goals_scored": "scored",
-        "team_total_goals": "team goals",
-        "first_name": "first name", 
-        "second_name":  "second name",
-    })
-
-    st.dataframe(table_df)    """   
-   
+# @timed("consistency_index")    
 def consistency_index(players):
     #history_df = pd.read_csv("./weekly_exec/weekly_points.csv")
-    history_df = pd.read_csv(DATA_DIR / "weekly_points.csv")
+    # history_df = pd.read_csv(DATA_DIR / "weekly_points.csv")
+    history_df = load_csv(DATA_DIR / "weekly_points.csv")
 
     consistency = (
         history_df.groupby("player_id")["total_points"]
@@ -423,19 +393,47 @@ def consistency_index(players):
 
     st.dataframe(table_df, height=500)
 
-def read_pl_table():
-    df  = pd.read_csv(DATA_DIR / "league_table.csv")
+# def read_pl_table():
+#     # df  = pd.read_csv(DATA_DIR / "league_table.csv")
+#     df = load_csv(DATA_DIR / "league_table.csv")
 
-    # Convert team column to dict
+#     # Convert team column to dict
+#     df["team"] = df["team"].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+#     df["team_name"] = df["team"].apply(lambda t: t.get("name") if isinstance(t, dict) else t)
+#     df["short_name"] = df["team"].apply(lambda t: t.get("shortName") if isinstance(t, dict) else t)
+
+#     standings = df[[
+#         "position", "team_name", "playedGames", "won", "draw", "lost", 
+#         "goalsFor", "goalsAgainst", "goalDifference", "points"
+#     ]].sort_values("position").reset_index(drop=True)
+#     return standings
+
+
+@st.cache_data
+def compute_pl_standings(path: str, mtime: float) -> pd.DataFrame:
+    df = pd.read_csv(path)
+
+    # team kolonu string json/dict formatındaysa parse et
     df["team"] = df["team"].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+
+    # dict içinden alanları çıkar
     df["team_name"] = df["team"].apply(lambda t: t.get("name") if isinstance(t, dict) else t)
     df["short_name"] = df["team"].apply(lambda t: t.get("shortName") if isinstance(t, dict) else t)
 
-    standings = df[[
-        "position", "team_name", "playedGames", "won", "draw", "lost", 
-        "goalsFor", "goalsAgainst", "goalDifference", "points"
-    ]].sort_values("position").reset_index(drop=True)
+    standings = (
+        df[[
+            "position", "team_name", "playedGames", "won", "draw", "lost",
+            "goalsFor", "goalsAgainst", "goalDifference", "points"
+        ]]
+        .sort_values("position")
+        .reset_index(drop=True)
+    )
     return standings
+
+def read_pl_table() -> pd.DataFrame:
+    path = str(DATA_DIR / "league_table.csv")
+    return compute_pl_standings(path, os.path.getmtime(path))
+
  
 import textwrap
 def render_standings_html(df: pd.DataFrame) -> str:
@@ -497,6 +495,7 @@ def render_standings_html(df: pd.DataFrame) -> str:
 
 import streamlit.components.v1 as components
 
+# @timed("show_table") 
 def show_table():
     st.title("🏆 Premier League Table")
     standings = read_pl_table()
@@ -506,15 +505,17 @@ def show_table():
 @st.cache_data
 def load_fixtures():
     url = "https://fantasy.premierleague.com/api/fixtures/"
-    r = requests.get(url)
+    #r = requests.get(url)
+    r = requests.get(url, timeout=15); r.raise_for_status()
     return r.json()
 
-@st.cache_data
-def load_teams():
-    url = "https://fantasy.premierleague.com/api/bootstrap-static/"
-    r = requests.get(url).json()
-    teams = pd.DataFrame(r["teams"])
-    return teams[["id", "name", "short_name", "code"]], r["events"]
+# @st.cache_data
+# def load_teams():
+#     url = "https://fantasy.premierleague.com/api/bootstrap-static/"
+#     r = requests.get(url).json()
+#     teams = pd.DataFrame(r["teams"])
+#     return teams[["id", "name", "short_name", "code"]], r["events"]
+
 
 def build_fixture_difficulty(fixtures, teams, events, gameweeks=5):
     # Just take the next X weeks
@@ -552,11 +553,12 @@ def build_fixture_difficulty(fixtures, teams, events, gameweeks=5):
 
     return avg_df, df
 
-def fixture_difficulty_analysis():
+# @timed("fixture_difficulty_analysis") 
+def fixture_difficulty_analysis(teams, events):
     st.title("📊 Fixture Difficulty Analysis")
 
     fixtures = load_fixtures()
-    teams, events = load_teams()
+    #teams, events = load_teams()
 
     avg_df, fixture_df = build_fixture_difficulty(fixtures, teams, events, gameweeks=5)
 
@@ -575,6 +577,7 @@ def fixture_difficulty_analysis():
     pivot = fixture_df.pivot_table(index="name", columns="gw", values="opp_info", aggfunc="first")
     st.dataframe(pivot, use_container_width=True)
 
+# @timed("show_player_stats") 
 def show_player_stats(players, teams):
     st.title("📊 Player Statistics – Dynamic Ranking")
 

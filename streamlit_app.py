@@ -93,7 +93,7 @@ with rows[0][1]:
 with rows[0][2]:
     with st.container():
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        player_advice(players)
+        player_advice(players)  
         st.markdown('</div>', unsafe_allow_html=True)
   
 # 2. satır
@@ -119,7 +119,7 @@ with rows[1][2]:
 with rows[2][0]:
     with st.container():
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        fixture_difficulty_analysis()
+        fixture_difficulty_analysis(teams, events)
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[2][1]:
