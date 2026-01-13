@@ -13,6 +13,19 @@ from visuals import (
 )
 from analytics import chip_suggestion
 
+@st.cache_data(ttl=3600)
+def load_fpl_data():
+    r = requests.get("https://fantasy.premierleague.com/api/bootstrap-static/", timeout=15)
+    r.raise_for_status()
+    data = r.json()
+    return (
+        pd.DataFrame(data["elements"]),
+        pd.DataFrame(data["teams"]),
+        data["events"]
+    )
+
+players, teams, events = load_fpl_data()
+
 # --- Page config ---
 st.set_page_config(
     page_title="FPL Analysis Dashboard",
@@ -21,12 +34,12 @@ st.set_page_config(
 )
 
 # --- Data ---
-url = "https://fantasy.premierleague.com/api/bootstrap-static/"
-response = requests.get(url)
-data = response.json() 
+# url = "https://fantasy.premierleague.com/api/bootstrap-static/"
+# response = requests.get(url)
+# data = response.json() 
 
-players = pd.DataFrame(data['elements'])
-teams = pd.DataFrame(data['teams'])
+# players = pd.DataFrame(data['elements'])
+# teams = pd.DataFrame(data['teams'])
 
 # --- Logo ---
 st.markdown(
@@ -87,13 +100,13 @@ with rows[0][2]:
 with rows[1][0]:
     with st.container():
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        team_dependency_ratio()
+        team_dependency_ratio(players, teams)
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[1][1]:
     with st.container():
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        consistency_index()
+        consistency_index(players)
         st.markdown('</div>', unsafe_allow_html=True)
 
 with rows[1][2]:
@@ -118,5 +131,5 @@ with rows[2][1]:
 with rows[2][2]:
     with st.container():
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        show_player_stats()
+        show_player_stats(players, teams)
         st.markdown('</div>', unsafe_allow_html=True)

@@ -5,15 +5,6 @@ import matplotlib.pyplot as plt
 import altair as alt
 import ast
 from paths import DATA_DIR
-
-# Get data from FPL API
-url = "https://fantasy.premierleague.com/api/bootstrap-static/"
-response = requests.get(url)
-data = response.json()
-
-# Export data to DataFrame
-players = pd.DataFrame(data['elements'])
-teams = pd.DataFrame(data['teams'])
    
 def graphics_selected_vs_points(players):
 
@@ -171,7 +162,110 @@ def player_advice(players):
 
     st.dataframe(table_df, height=600)
 
-def team_dependency_ratio():
+@st.cache_data(ttl=3600)
+def compute_team_dependency_ratio(players: pd.DataFrame, teams: pd.DataFrame) -> pd.DataFrame:
+    """
+    Returns one row per team: the player with the highest Team Dependency Ratio (TDR).
+    Cached because it involves groupby + merge.
+    """
+    # Work on a copy to avoid mutating the shared DataFrame across reruns
+    p = players[[
+        "id", "first_name", "second_name", "web_name",
+        "team", "goals_scored", "assists"
+    ]].copy()
+
+    # Contribution = goals + assists
+    p["contribution"] = p["goals_scored"].fillna(0) + p["assists"].fillna(0)
+
+    # Team total goals (based on goals_scored; simple and consistent with your current logic)
+    team_goals = (
+        p.groupby("team", as_index=False)["goals_scored"]
+         .sum()
+         .rename(columns={"team": "team_id", "goals_scored": "team_total_goals"})
+    )
+
+    t = teams[["id", "name", "short_name"]].copy()
+
+    merged = (
+        p.merge(t, left_on="team", right_on="id", how="left", suffixes=("", "_team"))
+         .merge(team_goals, left_on="team", right_on="team_id", how="left")
+    )
+
+    # Avoid division by zero
+    merged["team_total_goals"] = merged["team_total_goals"].fillna(0)
+
+    merged["TDR"] = (merged["contribution"] / merged["team_total_goals"].replace(0, pd.NA)).astype("Float64")
+
+    # Keep only teams where we can compute a meaningful ratio
+    merged = merged.dropna(subset=["TDR"])
+
+    # Pick the top TDR player per team
+    team_leaders = (
+        merged.sort_values("TDR", ascending=False)
+              .drop_duplicates(subset=["team"])
+              .reset_index(drop=True)
+    )
+
+    # Keep only columns we need downstream
+    out = team_leaders[[
+        "first_name", "second_name", "web_name",
+        "name", "short_name",
+        "goals_scored", "assists", "contribution",
+        "team_total_goals", "TDR"
+    ]].copy()
+
+    return out
+
+
+def team_dependency_ratio(players: pd.DataFrame, teams: pd.DataFrame) -> None:
+    st.title("🏟️ Team Dependency Ratio (TDR) Analysis")
+    st.markdown("The player who contributed the most points to each team is listed in this panel.")
+    st.markdown("Sometimes a player takes the scoring load off their team. If you think that team will win the week, you should definitely check it out!")
+
+    team_leaders = compute_team_dependency_ratio(players, teams)
+
+    # Chart
+    chart = (
+        alt.Chart(team_leaders)
+        .mark_bar()
+        .encode(
+            x=alt.X("short_name:N", title="Team"),
+            y=alt.Y("TDR:Q", axis=alt.Axis(format="%"), title="Team Dependency Ratio"),
+            color=alt.Color("name:N", legend=None),
+            tooltip=[
+                alt.Tooltip("first_name:N", title="First"),
+                alt.Tooltip("second_name:N", title="Last"),
+                alt.Tooltip("name:N", title="Team"),
+                alt.Tooltip("goals_scored:Q", title="Goals"),
+                alt.Tooltip("assists:Q", title="Assists"),
+                alt.Tooltip("contribution:Q", title="Contrib"),
+                alt.Tooltip("team_total_goals:Q", title="Team goals"),
+                alt.Tooltip("TDR:Q", format=".0%", title="TDR"),
+            ],
+        )
+        .properties(height=400)
+    )
+
+    st.altair_chart(chart, use_container_width=True)
+
+    # Table (pretty)
+    table_df = team_leaders.sort_values("TDR", ascending=False).reset_index(drop=True)
+    table_df.index = table_df.index + 1
+    table_df = table_df.rename(columns={
+        "goals_scored": "scored",
+        "team_total_goals": "team goals",
+        "first_name": "first name",
+        "second_name": "second name",
+    })
+
+    # Optional formatting
+    # Keep TDR as percentage display-friendly
+    st.dataframe(
+        table_df.style.format({"TDR": "{:.0%}"}),
+        use_container_width=True
+    )    
+
+""" def team_dependency_ratio(players, teams):
     # 🏃‍♂️ Player contribution
     players["contribution"] = players["goals_scored"] + players["assists"]
 
@@ -214,14 +308,6 @@ def team_dependency_ratio():
 
     st.altair_chart(chart, use_container_width=True)
 
-    # -----------------------------
-    # 📋 Table
-    # st.dataframe(
-    #     team_leaders[["first_name", "second_name", "name", "goals_scored", "assists", "contribution", "team_total_goals", "TDR"]]
-    #     .sort_values("TDR", ascending=False)
-    #     .reset_index(drop=True)
-    # )
-
     table_df = (
         team_leaders[["first_name", "second_name", "name", "goals_scored", "assists", "contribution", "team_total_goals", "TDR"]]
         .sort_values("TDR", ascending=False)
@@ -238,9 +324,9 @@ def team_dependency_ratio():
         "second_name":  "second name",
     })
 
-    st.dataframe(table_df)      
+    st.dataframe(table_df)    """   
    
-def consistency_index():
+def consistency_index(players):
     #history_df = pd.read_csv("./weekly_exec/weekly_points.csv")
     history_df = pd.read_csv(DATA_DIR / "weekly_points.csv")
 
@@ -489,7 +575,7 @@ def fixture_difficulty_analysis():
     pivot = fixture_df.pivot_table(index="name", columns="gw", values="opp_info", aggfunc="first")
     st.dataframe(pivot, use_container_width=True)
 
-def show_player_stats():
+def show_player_stats(players, teams):
     st.title("📊 Player Statistics – Dynamic Ranking")
 
     # Kullanıcıya görünen isim -> DataFrame kolon adı
