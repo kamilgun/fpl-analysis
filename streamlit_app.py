@@ -13,6 +13,18 @@ from visuals import (
 )
 from analytics import chip_suggestion
 
+# Add Google
+st.set_page_config(
+    page_title="FPL Analyst – Fantasy Premier League Data Dashboard",
+    page_icon="⚽",
+    layout="wide"
+)
+
+st.markdown("""
+<meta name="google-site-verification" content="dxyOY9w3Zsj56zGnmVCWoqCRcRYQs7NzwHemkTxoNZo" />
+""", unsafe_allow_html=True)
+
+
 @st.cache_data(ttl=3600)
 def load_fpl_data():
     r = requests.get("https://fantasy.premierleague.com/api/bootstrap-static/", timeout=15)
