@@ -129,8 +129,8 @@ def graphics_value_vs_points():
     st.dataframe(table_df, height=900)
 
 # @timed("player_advice")
-def player_advice(players):
-    st.title("🧭 Scout Assistant - Adviced Players")
+def player_advice(players, teams):
+    st.title("🧭 Scout Assistant - Advised Players")
     st.markdown("Here you can perform a detailed search for each position, including the player's playing time, value and selection rate in your search.")
     
     position = st.selectbox("Position", ["All", "Goalkeeper", "Defence", "Midfielder", "Forward"])
@@ -139,54 +139,68 @@ def player_advice(players):
     min_points = st.slider("Minimum points", 0, 250, 20)
     sel_range = st.slider("Selection Rate (%)", 0.0, 100.0, (5.0, 25.0))
 
-    # Matching dictionary for position transformation
     position_map = {
         1: "Goalkeeper",
         2: "Defence",
         3: "Midfielder",
         4: "Forward"
     }
+
     ply = players.copy()
-    # Converting now_cost from 10x to float
+
     ply["cost_million"] = ply["now_cost"] / 10
-
-    # Adding position name
     ply["position_name"] = ply["element_type"].map(position_map)
+    ply["selected_by_percent"] = pd.to_numeric(ply["selected_by_percent"], errors="coerce")
 
-    # Convert selected_by_percent to float
-    ply["selected_by_percent"] = ply["selected_by_percent"].astype(float)
+    # Takım adını ekle
+    team_lookup = teams[["id", "name"]].rename(columns={
+        "id": "team",
+        "name": "team_name"
+    })
 
-    # Filtering
+    ply = ply.merge(team_lookup, on="team", how="left")
+
     filtered_players = ply[
         (ply["cost_million"] <= cost_limit) &
         (ply["minutes"] >= min_minutes) &
         (ply["total_points"] >= min_points) &
         (ply["selected_by_percent"] >= sel_range[0]) &
-        (ply["selected_by_percent"] <= sel_range[1]) 
-    ]
-    
-    # Position filter - if not "All"
-    if position != "All":
-        filtered_players = filtered_players[filtered_players["position_name"] == position]
+        (ply["selected_by_percent"] <= sel_range[1])
+    ].copy()
 
-    # Calculate value ratio and sort
-    filtered_players["value_ratio"] = filtered_players["total_points"] / filtered_players["cost_million"]
+    if position != "All":
+        filtered_players = filtered_players[
+            filtered_players["position_name"] == position
+        ]
+
+    filtered_players["value_ratio"] = (
+        filtered_players["total_points"] / filtered_players["cost_million"]
+    ).round(2)
+
     filtered_players = filtered_players.sort_values("value_ratio", ascending=False)
 
-    # # 📋 Table
-    # st.dataframe(
-    #     filtered_players[["web_name", "team", "position_name", "cost_million", "total_points", "selected_by_percent", "value_ratio"]]
-    #     .sort_values("value_ratio", ascending=False)
-    #     .reset_index(drop=True)
-    # )
-    # 📋 Table
     table_df = (
-        filtered_players[["web_name", "team", "position_name", "cost_million", "total_points", "selected_by_percent", "value_ratio"]]
-        .sort_values("value_ratio", ascending=False)
+        filtered_players[[
+            "web_name",
+            "team_name",
+            "position_name",
+            "cost_million",
+            "total_points",
+            "selected_by_percent",
+            "value_ratio"
+        ]]
+        .rename(columns={
+            "web_name": "Player",
+            "team_name": "Team",
+            "position_name": "Position",
+            "cost_million": "Value",
+            "total_points": "Total Points",
+            "selected_by_percent": "Selected By (%)",
+            "value_ratio": "Points / Value"
+        })
         .reset_index(drop=True)
     )
 
-    # index'i 1'den başlat
     table_df.index = table_df.index + 1
 
     st.dataframe(table_df, height=600)
@@ -262,15 +276,14 @@ def team_dependency_ratio(players: pd.DataFrame, teams: pd.DataFrame) -> None:
             y=alt.Y("TDR:Q", axis=alt.Axis(format="%"), title="Team Dependency Ratio"),
             color=alt.Color("name:N", legend=None),
             tooltip=[
-                alt.Tooltip("first_name:N", title="First"),
-                alt.Tooltip("second_name:N", title="Last"),
-                alt.Tooltip("name:N", title="Team"),
-                alt.Tooltip("goals_scored:Q", title="Goals"),
-                alt.Tooltip("assists:Q", title="Assists"),
-                alt.Tooltip("contribution:Q", title="Contrib"),
-                alt.Tooltip("team_total_goals:Q", title="Team goals"),
-                alt.Tooltip("TDR:Q", format=".0%", title="TDR"),
-            ],
+                    alt.Tooltip("web_name:N", title="Player"),
+                    alt.Tooltip("name:N", title="Team"),
+                    alt.Tooltip("goals_scored:Q", title="Goals"),
+                    alt.Tooltip("assists:Q", title="Assists"),
+                    alt.Tooltip("contribution:Q", title="Goal Contribution"),
+                    alt.Tooltip("team_total_goals:Q", title="Team Goals"),
+                    alt.Tooltip("TDR:Q", format=".0%", title="TDR"),
+                ],
         )
         .properties(height=400)
     )
@@ -278,21 +291,43 @@ def team_dependency_ratio(players: pd.DataFrame, teams: pd.DataFrame) -> None:
     st.altair_chart(chart, use_container_width=True)
 
     # Table (pretty)
-    table_df = team_leaders.sort_values("TDR", ascending=False).reset_index(drop=True)
-    table_df.index = table_df.index + 1
-    table_df = table_df.rename(columns={
-        "goals_scored": "scored",
-        "team_total_goals": "team goals",
-        "first_name": "first name",
-        "second_name": "second name",
-    })
+    table_df = (
+        team_leaders
+        .sort_values("TDR", ascending=False)
+        [[
+            "web_name",
+            "name",
+            "short_name",
+            "goals_scored",
+            "assists",
+            "contribution",
+            "team_total_goals",
+            "TDR"
+        ]]
+        .rename(columns={
+            "web_name": "Player",
+            "name": "Team",
+            "short_name": "Team Code",
+            "goals_scored": "Goals",
+            "assists": "Assists",
+            "contribution": "Goal Contribution",
+            "team_total_goals": "Team Goals",
+            "TDR": "TDR"
+        })
+        .reset_index(drop=True)
+    )
 
-    # Optional formatting
-    # Keep TDR as percentage display-friendly
+    table_df.index = table_df.index + 1
+
     st.dataframe(
-        table_df.style.format({"TDR": "{:.0%}"}),
-        use_container_width=True
-    )      
+        table_df.style.format({
+            "TDR": "{:.0%}",
+            "Goal Contribution": "{:.0f}",
+            "Team Goals": "{:.0f}"
+        }),
+    use_container_width=True,
+    height=500
+) 
 
 # @timed("consistency_index")    
 def consistency_index(players):
@@ -544,6 +579,8 @@ def build_fixture_difficulty(fixtures, teams, events, gameweeks=5):
         })
 
     df = pd.DataFrame(data)
+    if df.empty:
+        return pd.DataFrame(), pd.DataFrame()
     df = df.merge(teams, left_on="team", right_on="id").drop("id", axis=1)
     df = df.merge(teams, left_on="opponent", right_on="id", suffixes=("", "_opp")).drop("id", axis=1)
 
@@ -561,6 +598,9 @@ def fixture_difficulty_analysis(teams, events):
     #teams, events = load_teams()
 
     avg_df, fixture_df = build_fixture_difficulty(fixtures, teams, events, gameweeks=5)
+    if avg_df.empty or fixture_df.empty:
+        st.warning("Fixture difficulty datası şu anda üretilemedi. Muhtemelen önümüzdeki gameweek fixture datası henüz API'de yok.")
+        return
 
     st.write("### Average FDR (Next 5 Games)")
     

@@ -105,7 +105,7 @@ with rows[0][1]:
 with rows[0][2]:
     with st.container():
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        player_advice(players)  
+        player_advice(players, teams)
         st.markdown('</div>', unsafe_allow_html=True)
   
 # 2. satır
