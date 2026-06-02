@@ -2,6 +2,8 @@ import streamlit as st
 import os
 import requests
 import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import altair as alt
 import ast
@@ -32,41 +34,51 @@ def load_csv(path) -> pd.DataFrame:
 
 # @timed("graphics_selected_vs_points")
 def graphics_selected_vs_points(players):
-
     ply = players.copy()
-    # convert column to float
-    ply['selected_by_percent'] = pd.to_numeric(players['selected_by_percent'], errors='coerce')
+    ply["selected_by_percent"] = pd.to_numeric(
+        ply["selected_by_percent"],
+        errors="coerce"
+    )
 
     st.title("👥 Selection Rate vs Total Points")
     st.markdown("Displaying players based on their selection rates. You can examine less-preferred players with good ratings or more-preferred players with ineffective scores.")
     st.markdown("Y-Axis: Total Points | X-Axis: Selection Rate (%)")
 
-    # Get filter from user
     min_sel = st.slider("Min selection rate (%)", 0.0, 100.0, 3.0)
     max_sel = st.slider("Max selection rate (%)", 0.0, 100.0, 10.0)
-   
-  
-    # Filter
+
     filtered = ply[
-        (ply['selected_by_percent'] >= min_sel) &
-        (ply['selected_by_percent'] <= max_sel) &
-        (ply['total_points'] > 0)
-    ]
+        (ply["selected_by_percent"] >= min_sel) &
+        (ply["selected_by_percent"] <= max_sel) &
+        (ply["total_points"] > 0)
+    ].copy()
 
-    # Create Graphics
-    fig, ax = plt.subplots()
-    ax.scatter(filtered['selected_by_percent'], filtered['total_points'])
+    if filtered.empty:
+        st.warning("No players found for the selected filters.")
+        return
 
-    # Name the spots
-    for i, row in filtered.iterrows():
-        ax.text(row['selected_by_percent'], row['total_points'], row['web_name'], fontsize=8)
+    fig, ax = plt.subplots(figsize=(10, 6))
 
-    ax.set_xlabel('Selection Rate (%)')
-    ax.set_ylabel('Total Points')
-    ax.set_title('Selection Rate vs Total Points')
+    ax.scatter(
+        filtered["selected_by_percent"],
+        filtered["total_points"]
+    )
 
-    # Publish to streamlit
-    st.pyplot(fig)
+    for _, row in filtered.iterrows():
+        ax.text(
+            row["selected_by_percent"],
+            row["total_points"],
+            row["web_name"],
+            fontsize=8
+        )
+
+    ax.set_xlabel("Selection Rate (%)")
+    ax.set_ylabel("Total Points")
+    ax.set_title("Selection Rate vs Total Points")
+    ax.grid(True, alpha=0.3)
+
+    st.pyplot(fig, clear_figure=True)
+    plt.close(fig)
 
 # @timed("graphics_value_vs_points")
 def graphics_value_vs_points():
