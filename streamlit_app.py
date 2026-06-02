@@ -54,14 +54,9 @@ st.set_page_config(
 # teams = pd.DataFrame(data['teams'])
 
 # --- Logo ---
-st.markdown(
-    """
-    <div style="text-align:center; margin-bottom:20px;">
-        <img src="https://fantasy.premierleague.com/static/media/shared/branding/fpl-logo--darkbg.abc123.png" 
-             style="max-width: 80%; height: auto;">
-    </div>
-    """,
-    unsafe_allow_html=True
+st.image(
+    "assets/header.png",
+    use_container_width=True
 )
   
 # --- Global CSS for card style ---
