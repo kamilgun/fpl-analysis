@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 import requests
 import streamlit as st
+import streamlit.components.v1 as components
 
 from analytics import chip_suggestion
 from visuals import (
@@ -23,6 +24,21 @@ st.set_page_config(
     page_title="FPL Analyst – Fantasy Premier League Data Dashboard",
     page_icon="⚽",
     layout="wide",
+)
+
+components.html(
+    """
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYEP4RVE3G"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-PYEP4RVE3G');
+    </script>
+    """,
+    height=0,
 )
 
 # -------------------------------------------------------------------
